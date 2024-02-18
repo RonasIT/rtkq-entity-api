@@ -26,7 +26,7 @@
   "version": "0.1.0",
   "main": "expo-router/entry",
   "scripts": {
-    "lint": "npx tsc && eslint ./",
+    "lint": "eslint ./",
     "format": "npx prettier --write . && npm run lint -- --fix",
     "prepare": "husky install",
     "prepack": "node scripts/prepack.js && npm pkg set 'scripts.postinstall'='npx rimraf app.json scripts && npm pkg delete 'scripts.prepack' 'scripts.postpack' 'scripts.postinstall''",
@@ -59,10 +59,12 @@
     "husky": "^8.0.2",
     "lint-staged": "^14.0.1",
     "prettier": "^3.0.3",
+    "tsc-files": "^1.1.4",
     "type-fest": "^3.0.0",
     "typescript": "~5.3.3"
   },
   "lint-staged": {
+    "*.{ts,tsx}": "tsc-files --noEmit",
     "*.{ts,tsx,js,html,json,md}": "prettier --write",
     "*.{ts,tsx,js}": "eslint --cache --fix"
   }
