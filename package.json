@@ -23,7 +23,7 @@
     "type": "git",
     "url": "https://github.com/RonasIT/rtkq-entity-api.git"
   },
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "src/index.ts",
   "scripts": {
     "lint": "eslint ./",
