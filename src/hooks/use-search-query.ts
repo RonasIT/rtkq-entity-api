@@ -1,10 +1,14 @@
 import { RefetchConfigOptions, SubscriptionOptions } from '@reduxjs/toolkit/dist/query/core/apiState.d';
 import { useEffect, useState } from 'react';
-import { BaseEntity, PaginationRequest } from '../models';
+import { BaseEntity, PaginationRequest, PaginationResponse } from '../models';
 import { EntityApi, EntityMutationEndpointName } from '../types';
 
-export const useSearchQuery = <TEntity extends BaseEntity, TRequest extends PaginationRequest>(
-  entityApi: EntityApi<TEntity, TRequest, any, Array<EntityMutationEndpointName>>,
+export const useSearchQuery = <
+  TEntity extends BaseEntity,
+  TRequest extends PaginationRequest,
+  TResponse extends PaginationResponse<TEntity>,
+>(
+  entityApi: EntityApi<TEntity, TRequest, any, TResponse, Array<EntityMutationEndpointName>>,
   initialParams?: TRequest,
   queryOptions?: SubscriptionOptions & RefetchConfigOptions & { skip?: boolean },
 ): typeof result => {

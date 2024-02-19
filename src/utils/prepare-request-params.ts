@@ -6,8 +6,5 @@ export function prepareRequestParams<TRequest>(
 ): Record<string, any> {
   const request = new requestConstructor(params || {}) as TRequest;
 
-  return instanceToPlain(request, {
-    excludeExtraneousValues: true,
-    exposeUnsetFields: false
-  });
+  return instanceToPlain(request, { excludeExtraneousValues: true, exposeUnsetFields: false });
 }
