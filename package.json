@@ -31,8 +31,8 @@
     "prepare": "husky install"
   },
   "dependencies": {
-    "@reduxjs/toolkit": "~2.2.1",
-    "class-transformer": "~0.5.1"
+    "@reduxjs/toolkit": "^2.2.1",
+    "class-transformer": "^0.5.1"
   },
   "peerDependencies": {
     "axios": "^1.6.7",
