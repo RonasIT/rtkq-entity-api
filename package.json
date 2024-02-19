@@ -1,6 +1,6 @@
 {
   "name": "@ronas-it/rtkq-entity-api",
-  "description": "RTK Query wrapper for CRUD operations with entities",
+  "description": "RTK Query wrapper for CRUD operations with your API entities",
   "author": "Ronas IT",
   "bugs": {
     "url": "https://github.com/RonasIT/rtkq-entity-api"
@@ -8,16 +8,16 @@
   "homepage": "https://github.com/RonasIT/rtkq-entity-api/tree/main",
   "keywords": [
     "react",
-    "react native",
-    "rtk",
     "rtkq",
+    "redux-toolkit",
     "query",
-    "redux",
-    "toolkit",
     "typescript",
     "entity",
     "crud",
     "api"
+  ],
+  "files": [
+    "src/"
   ],
   "repository": {
     "type": "git",
@@ -28,9 +28,7 @@
   "scripts": {
     "lint": "eslint ./",
     "format": "npx prettier --write . && npm run lint -- --fix",
-    "prepare": "husky install",
-    "prepack": "node scripts/prepack.js && npm pkg set 'scripts.postinstall'='npx rimraf app.json scripts && npm pkg delete 'scripts.prepack' 'scripts.postpack' 'scripts.postinstall''",
-    "postpack": "node scripts/postpack.js && npm pkg delete 'scripts.postinstall'"
+    "prepare": "husky install"
   },
   "dependencies": {
     "@reduxjs/toolkit": "~2.2.1",
