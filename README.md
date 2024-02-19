@@ -9,7 +9,7 @@ Wrapper utilities for CRUD operations with entities using [RTK Query](https://re
 1. Install the package:
 
 ```sh
-npm i @ronasit/rtkq-entity-api
+npm i @ronas-it/rtkq-entity-api
 ```
 
 2. Install [class-transformer and reflect-metadata](https://github.com/typestack/class-transformer?tab=readme-ov-file#installation)

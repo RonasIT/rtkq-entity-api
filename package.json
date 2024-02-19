@@ -24,7 +24,7 @@
     "url": "https://github.com/RonasIT/rtkq-entity-api.git"
   },
   "version": "0.1.0",
-  "main": "expo-router/entry",
+  "main": "src/index.ts",
   "scripts": {
     "lint": "eslint ./",
     "format": "npx prettier --write . && npm run lint -- --fix",
@@ -40,11 +40,11 @@
     "lodash-es": "^4.17.21",
     "luxon": "^3.4.4",
     "immer": "^10.0.3",
-    "react-redux": "^9.1.0"
+    "react-redux": "^9.1.0",
+    "@types/lodash": "^4.14.182",
+    "@types/luxon": "^3.4.2"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.182",
-    "@types/luxon": "^3.4.2",
     "@types/node": "16.11.7",
     "@types/react": "~18.2.56",
     "@typescript-eslint/eslint-plugin": "7.0.1",
