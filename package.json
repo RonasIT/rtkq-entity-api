@@ -41,6 +41,7 @@
     "axios-observable": "^2.0.0",
     "lodash-es": "^4.17.21",
     "luxon": "^3.4.4",
+    "immer": "^10.0.3",
     "react-redux": "^9.1.0"
   },
   "devDependencies": {
