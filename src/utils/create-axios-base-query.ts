@@ -1,6 +1,6 @@
 import { SerializedError } from '@reduxjs/toolkit';
-import { BaseQueryApi, BaseQueryFn } from '@reduxjs/toolkit/dist/query/index.d';
-import { MaybePromise } from '@reduxjs/toolkit/dist/query/tsHelpers.d';
+import { BaseQueryApi, BaseQueryFn } from '@reduxjs/toolkit/dist/query';
+import { MaybePromise } from '@reduxjs/toolkit/dist/query/tsHelpers';
 import { AxiosError, AxiosInstance, AxiosRequestConfig, RawAxiosRequestHeaders } from 'axios';
 import AxiosObservable from 'axios-observable';
 import { merge } from 'lodash';
@@ -9,17 +9,18 @@ import { lastValueFrom } from 'rxjs';
 export type BaseQueryFunction = BaseQueryFn<AxiosRequestConfig, unknown, SerializedError & Partial<AxiosError>>;
 
 export type AxiosBaseQueryArgs = {
-  httpClient: AxiosObservable | AxiosInstance;
+  getHttpClient: (api: BaseQueryApi & { extra?: any }) => AxiosObservable | AxiosInstance;
   prepareHeaders?: (api: BaseQueryApi & { extra?: any }) => MaybePromise<RawAxiosRequestHeaders>;
 };
 
-export const createAxiosBaseQuery = ({ httpClient, prepareHeaders }: AxiosBaseQueryArgs): BaseQueryFunction => {
+export const createAxiosBaseQuery = ({ getHttpClient, prepareHeaders }: AxiosBaseQueryArgs): BaseQueryFunction => {
   return async (requestConfig, api: BaseQueryApi) => {
     const extraHeaders: RawAxiosRequestHeaders = prepareHeaders
       ? await prepareHeaders(api as BaseQueryApi & { extra?: any })
       : {};
 
     requestConfig.headers = merge(requestConfig.headers || {}, extraHeaders);
+    const httpClient = getHttpClient(api as BaseQueryApi & { extra?: any });
 
     try {
       const response =
@@ -32,10 +33,7 @@ export const createAxiosBaseQuery = ({ httpClient, prepareHeaders }: AxiosBaseQu
         meta: response
       };
     } catch (axiosError) {
-      const error = axiosError as AxiosError<{
-        error?: string;
-        message?: string;
-      }>;
+      const error = axiosError as AxiosError<{ error?: string; message?: string }>;
 
       return {
         error: {
