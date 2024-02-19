@@ -60,9 +60,9 @@ export type EntityApi<
       TEndpointDefinitions,
       string | NoInfer<TNewTagTypes>,
       TNewDefinitions
-    > extends infer TNewDefinitions
+    > extends infer NewDefinitions
       ? {
-          [K in keyof TNewDefinitions]?: Partial<TNewDefinitions[K]> | ((definition: TNewDefinitions[K]) => void);
+          [K in keyof NewDefinitions]?: Partial<NewDefinitions[K]> | ((definition: NewDefinitions[K]) => void);
         }
       : never;
   }): EntityApi<
@@ -71,7 +71,7 @@ export type EntityApi<
     TEntityRequest,
     TSearchResponse,
     TOmitEndpoints,
-    TEndpointDefinitions & TNewDefinitions
+    TEndpointDefinitions | TNewDefinitions
   >;
 } & { util: EntityApiUtils<TEntity, TSearchRequest> };
 

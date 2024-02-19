@@ -16,8 +16,8 @@ export const useInfiniteQuery = <
     'useSearchInfiniteQuery' | 'endpoints' | 'util'
   >,
   initialParams?: TRequest,
-  utilities: { checkHasNextPage?: (paginationResponse?: PaginationResponse<TEntity>) => boolean } = {},
   queryOptions?: Partial<SubscriptionOptions & RefetchConfigOptions & { skip?: boolean }>,
+  utilities: { checkHasNextPage?: (paginationResponse?: PaginationResponse<TEntity>) => boolean } = {},
 ): typeof result => {
   const dispatch: ThunkDispatch<any, any, UnknownAction> = useDispatch();
   const [searchRequest, setSearchRequest] = useState<TRequest>(initialParams as TRequest);
