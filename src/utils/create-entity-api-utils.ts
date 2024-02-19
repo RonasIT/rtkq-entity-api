@@ -43,7 +43,7 @@ export const createEntityApiUtils = <
 
       return await dispatch(api.endpoints.get.initiate({ id, params: entityRequest }, { forceRefetch: true })).unwrap();
     },
-    patchEntityQueries: async (entityData, { dispatch, getState }, shouldSkipFetching) => {
+    patchEntityQueries: async (entityData, { dispatch, getState }, shouldRefetchEntity) => {
       const patchResults: Array<PatchCollection> = [];
 
       if (!entityData?.id) {
@@ -53,9 +53,9 @@ export const createEntityApiUtils = <
       const cachedQueries = api.util.selectInvalidatedBy(getState(), [{ type: entityName, id: entityData.id }]);
 
       for (const { endpointName, originalArgs } of cachedQueries) {
-        const existingEntity = shouldSkipFetching
-          ? entityData
-          : await entityApiUtils.fetchEntity(entityData.id, originalArgs?.params || originalArgs, dispatch);
+        const existingEntity = shouldRefetchEntity
+          ? await entityApiUtils.fetchEntity(entityData.id, originalArgs?.params || originalArgs, dispatch)
+          : entityData;
 
         const action = api.util.updateQueryData(
           endpointName as EntityQueryEndpointName,
@@ -133,15 +133,11 @@ export const createEntityApiUtils = <
         dispatch(api.util.upsertQueryData('get', { id: entity.id, params: entityRequest }, entity));
       }
     },
-    handleEntityUpdate: async (arg, { optimistic, shouldSkipRefetching, dispatch, queryFulfilled, getState }) => {
+    handleEntityUpdate: async (arg, { optimistic, shouldRefetchEntity, dispatch, queryFulfilled, getState }) => {
       const itemPatch = typeof arg === 'object' && arg.id ? arg : ({ id: arg } as EntityPartial<TEntity>);
 
       if (optimistic) {
-        const patches = await entityApiUtils.patchEntityQueries(
-          itemPatch,
-          { dispatch, getState },
-          shouldSkipRefetching,
-        );
+        const patches = await entityApiUtils.patchEntityQueries(itemPatch, { dispatch, getState }, shouldRefetchEntity);
 
         queryFulfilled.catch(() => {
           patches.forEach((patch) => {
@@ -154,7 +150,7 @@ export const createEntityApiUtils = <
         await entityApiUtils.patchEntityQueries(
           updatedEntityData || itemPatch,
           { dispatch, getState },
-          shouldSkipRefetching,
+          shouldRefetchEntity,
         );
       }
     },

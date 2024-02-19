@@ -16,7 +16,7 @@ export type EntityApiUtils<
   patchEntityQueries: (
     entityData: EntityPartial<TEntity>,
     endpointLifecycle: Pick<LifecycleApi, 'dispatch' | 'getState'>,
-    shouldSkipRefetching?: boolean,
+    shouldRefetchEntity?: boolean,
   ) => Promise<Array<PatchCollection>>;
   fetchEntity: (
     id: TEntity['id'],
@@ -41,7 +41,7 @@ export type EntityApiUtils<
     arg: EntityPartial<TEntity> | TEntity['id'],
     endpointLifecycle: {
       optimistic?: boolean;
-      shouldSkipRefetching?: boolean;
+      shouldRefetchEntity?: boolean;
     } & MutationLifecycleApi<typeof arg, BaseQueryFunction, EntityPartial<TEntity> | void, string>,
   ) => void | Promise<void>;
   handleEntityDelete: (
