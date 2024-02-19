@@ -1,6 +1,6 @@
 import { SerializedError } from '@reduxjs/toolkit';
-import { BaseQueryApi, BaseQueryFn } from '@reduxjs/toolkit/dist/query';
-import { MaybePromise } from '@reduxjs/toolkit/dist/query/tsHelpers';
+import { BaseQueryApi, BaseQueryFn } from '@reduxjs/toolkit/dist/query/index.d';
+import { MaybePromise } from '@reduxjs/toolkit/dist/query/tsHelpers.d';
 import { AxiosError, AxiosInstance, AxiosRequestConfig, RawAxiosRequestHeaders } from 'axios';
 import AxiosObservable from 'axios-observable';
 import { merge } from 'lodash';
