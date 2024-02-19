@@ -1,7 +1,7 @@
 import { PatchCollection } from '@reduxjs/toolkit/dist/query/core/buildThunks.d';
 import { ClassConstructor } from 'class-transformer';
 import { merge } from 'lodash';
-import { BaseEntity, EntityRequest, PaginationRequest } from '../models';
+import { BaseEntity, EntityRequest, PaginationRequest, PaginationResponse } from '../models';
 import {
   EntityApi,
   EntityApiUtils,
@@ -13,15 +13,22 @@ import { createEntityInstance } from './create-entity-instance';
 
 export const createEntityApiUtils = <
   TEntity extends BaseEntity,
+  TSearchResponse extends PaginationResponse<TEntity> = PaginationResponse<TEntity>,
   TSearchRequest extends PaginationRequest = PaginationRequest,
   TEntityRequest extends EntityRequest = EntityRequest,
 >(options: {
-  api: EntityApi<TEntity, TSearchRequest, TEntityRequest, Array<EntityMutationEndpointName>>;
+  api: EntityApi<TEntity, TSearchRequest, TEntityRequest, TSearchResponse, Array<EntityMutationEndpointName>>;
   entitySearchRequestConstructor?: ClassConstructor<TSearchRequest> | typeof PaginationRequest;
   entityGetRequestConstructor?: ClassConstructor<TEntityRequest> | typeof EntityRequest;
 }): EntityApiUtils<TEntity, TSearchRequest, TEntityRequest> => {
   const { entitySearchRequestConstructor = PaginationRequest, entityGetRequestConstructor = EntityRequest } = options;
-  const api = options.api as EntityApi<TEntity, TSearchRequest, TEntityRequest, Array<EntityMutationEndpointName>>;
+  const api = options.api as EntityApi<
+    TEntity,
+    TSearchRequest,
+    TEntityRequest,
+    TSearchResponse,
+    Array<EntityMutationEndpointName>
+  >;
   const entityName = api.reducerPath;
 
   const entityApiUtils: EntityApiUtils<TEntity, TSearchRequest, TEntityRequest> = {
@@ -46,7 +53,7 @@ export const createEntityApiUtils = <
       const cachedQueries = api.util.selectInvalidatedBy(getState(), [{ type: entityName, id: entityData.id }]);
 
       for (const { endpointName, originalArgs } of cachedQueries) {
-        const fullEntity = shouldSkipFetching
+        const existingEntity = shouldSkipFetching
           ? entityData
           : await entityApiUtils.fetchEntity(entityData.id, originalArgs?.params || originalArgs, dispatch);
 
@@ -58,10 +65,10 @@ export const createEntityApiUtils = <
               const existingItemIndex = endpointData.data.findIndex((item) => item.id === entityData.id);
 
               if (existingItemIndex > -1) {
-                endpointData.data[existingItemIndex] = merge(endpointData.data[existingItemIndex], fullEntity);
+                endpointData.data[existingItemIndex] = merge(endpointData.data[existingItemIndex], existingEntity);
               }
             } else {
-              merge(endpointData, fullEntity);
+              merge(endpointData, existingEntity);
             }
           },
         );
@@ -119,9 +126,7 @@ export const createEntityApiUtils = <
       const entityRequest = createEntityInstance<TEntityRequest>(
         entityGetRequestConstructor as ClassConstructor<TEntityRequest>,
         request,
-        {
-          convertFromInstance: entitySearchRequestConstructor as ClassConstructor<TSearchRequest>
-        },
+        { convertFromInstance: entitySearchRequestConstructor as ClassConstructor<TSearchRequest> },
       );
 
       for (const entity of response.data) {
@@ -155,10 +160,7 @@ export const createEntityApiUtils = <
     },
     handleEntityDelete: async (id, { optimistic, dispatch, queryFulfilled, getState }) => {
       if (optimistic) {
-        const patches = await entityApiUtils.clearEntityQueries(id, {
-          dispatch,
-          getState
-        });
+        const patches = await entityApiUtils.clearEntityQueries(id, { dispatch, getState });
 
         queryFulfilled.catch(() => {
           patches.forEach((patch) => {

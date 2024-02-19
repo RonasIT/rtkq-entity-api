@@ -1,11 +1,12 @@
 import { Expose } from 'class-transformer';
-import { TransformBoolean, TransformRelations } from '../utils/class-transformer';
+import { LiteralUnion } from 'type-fest';
+import { BaseOrderBy } from '../types';
+import { TransformBoolean, TransformRelations } from '../utils';
 
 export class PaginationRequest<
   TRelation extends string = string,
-  TOrderBy extends string = string,
+  TOrderBy extends string = LiteralUnion<BaseOrderBy, string>,
   TWithCount extends string = string,
-  TWithAvg extends string = string,
 > {
   @Expose()
   public query?: string;
@@ -28,10 +29,6 @@ export class PaginationRequest<
   @Expose({ name: 'with_count' })
   public withCount?: Array<TWithCount>;
 
-  @TransformRelations()
-  @Expose({ name: 'with_avg' })
-  public withAvg?: Array<TWithAvg>;
-
   @Expose({ name: 'order_by' })
   public orderBy?: TOrderBy | Array<TOrderBy>;
 
@@ -39,7 +36,7 @@ export class PaginationRequest<
   @Expose()
   public desc?: boolean;
 
-  constructor(request: Partial<PaginationRequest<TRelation, TOrderBy, TWithCount, TWithAvg>>) {
+  constructor(request: Partial<PaginationRequest<TRelation, TOrderBy, TWithCount>>) {
     Object.assign(this, request);
   }
 }
