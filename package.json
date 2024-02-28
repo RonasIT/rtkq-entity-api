@@ -1,6 +1,6 @@
 {
   "name": "@ronas-it/rtkq-entity-api",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "description": "RTK Query wrapper for CRUD operations with your API entities",
   "author": "Ronas IT",
   "bugs": {
@@ -17,17 +17,21 @@
     "crud",
     "api"
   ],
-  "files": [
-    "src/"
-  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/RonasIT/rtkq-entity-api.git"
   },
-  "main": "src/index.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "lint": "eslint ./",
     "format": "npx prettier --write . && npm run lint -- --fix",
+    "build": "tsup-node",
+    "prepack": "npm run build",
     "prepare": "husky install"
   },
   "dependencies": {
@@ -35,14 +39,14 @@
     "class-transformer": "^0.5.1"
   },
   "peerDependencies": {
+    "@types/lodash": "^4.14.182",
+    "@types/luxon": "^3.4.2",
     "axios": "^1.6.7",
     "axios-observable": "^2.0.0",
-    "lodash-es": "^4.17.21",
-    "luxon": "^3.4.4",
     "immer": "^10.0.3",
-    "react-redux": "^9.1.0",
-    "@types/lodash": "^4.14.182",
-    "@types/luxon": "^3.4.2"
+    "lodash": "^4.17.21",
+    "luxon": "^3.4.4",
+    "react-redux": "^9.1.0"
   },
   "devDependencies": {
     "@types/node": "16.11.7",
@@ -59,6 +63,7 @@
     "lint-staged": "^14.0.1",
     "prettier": "^3.0.3",
     "tsc-files": "^1.1.4",
+    "tsup": "^8.0.2",
     "type-fest": "^3.0.0",
     "typescript": "~5.3.3"
   },
