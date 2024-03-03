@@ -2,7 +2,7 @@ import { SerializedError } from '@reduxjs/toolkit';
 import { BaseQueryApi, BaseQueryFn } from '@reduxjs/toolkit/dist/query/index.d';
 import { MaybePromise } from '@reduxjs/toolkit/dist/query/tsHelpers.d';
 import { AxiosError, AxiosInstance, AxiosRequestConfig, RawAxiosRequestHeaders } from 'axios';
-import AxiosObservable from 'axios-observable';
+import { Axios as AxiosObservable } from 'axios-observable';
 import { merge } from 'lodash';
 import { lastValueFrom } from 'rxjs';
 
@@ -32,16 +32,20 @@ export const createAxiosBaseQuery = ({ getHttpClient, prepareHeaders }: AxiosBas
         data: response.data,
         meta: response
       };
-    } catch (axiosError) {
-      const error = axiosError as AxiosError<{ error?: string; message?: string }>;
+    } catch (error) {
+      if (!(error as AxiosError)?.isAxiosError) {
+        throw error;
+      }
+
+      const axiosError = error as AxiosError<{ error?: string; message?: string }>;
 
       return {
         error: {
-          code: String(error.response?.status),
-          message: error.response?.data?.message || error.response?.data?.error,
-          data: error.response?.data
+          code: String(axiosError.response?.status),
+          message: axiosError.response?.data?.message || axiosError.response?.data?.error,
+          data: axiosError.response?.data
         },
-        meta: error.response
+        meta: axiosError.response
       };
     }
   };
