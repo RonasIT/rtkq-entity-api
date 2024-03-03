@@ -1,6 +1,6 @@
 {
   "name": "@ronas-it/rtkq-entity-api",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "RTK Query wrapper for CRUD operations with your API entities",
   "author": "Ronas IT",
   "bugs": {
