@@ -12,8 +12,7 @@ Wrapper utilities for CRUD operations with entities using [RTK Query](https://re
 npm i @ronas-it/rtkq-entity-api
 ```
 
-2. Install [class-transformer and reflect-metadata](https://github.com/typestack/class-transformer?tab=readme-ov-file#installation)
-3. Create base query with your API configuration, for example [using Axios](https://redux-toolkit.js.org/rtk-query/usage/customizing-queries#axios-basequery):
+2. Create base query with your API configuration, for example [using Axios](https://redux-toolkit.js.org/rtk-query/usage/customizing-queries#axios-basequery):
 
 ```ts
 import axios from 'axios';
@@ -28,7 +27,7 @@ export const createAppApi = createApiCreator({
 });
 ```
 
-4. Now you can generate your entity APIs with this creator:
+3. Now you can generate your entity APIs with this creator:
 
 ```ts
 import { createEntityApi } from '@ronas-it/rtkq-entity-api';
@@ -37,14 +36,14 @@ import { User } from 'your-project/models';
 
 export const usersApi = createEntityApi({
   entityName: 'user', // An entity name. Must by unique
-  entityConstructor: User, // The entity model class constructor. Supports class-transformer decorators
+  entityConstructor: User, // The entity model class constructor
   baseApiCreator: createAppApi, // The api creator that shares configuration for new APIs
   baseEndpoint: '/users', // Endpoint, relative to base URL configured in the API creator
-  omitEndpoints: ['create', 'update', 'delete'], // Allow only 'get' and 'search methods'
+  omitEndpoints: ['create', 'update', 'delete'], // Allow only 'get' and 'search' methods
 });
 ```
 
-5. Use the api you created as usual one [created by RTK Query](https://redux-toolkit.js.org/rtk-query/overview#basic-usage)
+4. Use the api you created as usual one [created by RTK Query](https://redux-toolkit.js.org/rtk-query/overview#basic-usage)
 
 ## TODOs
 
