@@ -1,10 +1,11 @@
 {
   "name": "@ronas-it/rtkq-entity-api",
   "version": "0.2.1",
-  "description": "RTK Query wrapper for CRUD operations with your API entities",
+  "description": "Wrapper utilities for CRUD operations with REST APIs entities using RTK Query",
+  "license": "MIT",
   "author": "Ronas IT",
   "bugs": {
-    "url": "https://github.com/RonasIT/rtkq-entity-api"
+    "url": "https://github.com/RonasIT/rtkq-entity-api/issues"
   },
   "homepage": "https://github.com/RonasIT/rtkq-entity-api/tree/main",
   "keywords": [

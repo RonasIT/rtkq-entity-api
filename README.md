@@ -1,5 +1,3 @@
-# [Work in progress]
-
 # RTK Query Entity API
 
 Wrapper utilities for CRUD operations with REST APIs entities using [RTK Query](https://redux-toolkit.js.org/rtk-query/overview).
@@ -36,7 +34,7 @@ import { User } from 'your-project/models';
 
 export const usersApi = createEntityApi({
   entityName: 'user', // An entity name. Must by unique
-  entityConstructor: User, // The entity model class constructor
+  entityConstructor: User, // The entity model class constructor. Supports class-transformer
   baseApiCreator: createAppApi, // The api creator that shares configuration for new APIs
   baseEndpoint: '/users', // Endpoint, relative to base URL configured in the API creator
   omitEndpoints: ['create', 'update', 'delete'], // Allow only 'get' and 'search' methods
