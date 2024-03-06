@@ -2,7 +2,7 @@
 
 # RTK Query Entity API
 
-Wrapper utilities for CRUD operations with entities using [RTK Query](https://redux-toolkit.js.org/rtk-query/overview).
+Wrapper utilities for CRUD operations with REST APIs entities using [RTK Query](https://redux-toolkit.js.org/rtk-query/overview).
 
 ## Usage
 
