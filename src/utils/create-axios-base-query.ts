@@ -1,12 +1,18 @@
 import { SerializedError } from '@reduxjs/toolkit';
 import { BaseQueryApi, BaseQueryFn } from '@reduxjs/toolkit/dist/query/index.d';
 import { MaybePromise } from '@reduxjs/toolkit/dist/query/tsHelpers.d';
-import { AxiosError, AxiosInstance, AxiosRequestConfig, RawAxiosRequestHeaders } from 'axios';
+import { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, RawAxiosRequestHeaders } from 'axios';
 import { Axios as AxiosObservable } from 'axios-observable';
 import { merge } from 'lodash';
 import { lastValueFrom } from 'rxjs';
 
-export type BaseQueryFunction = BaseQueryFn<AxiosRequestConfig, unknown, SerializedError & Partial<AxiosError>>;
+export type BaseQueryFunction = BaseQueryFn<
+  AxiosRequestConfig,
+  unknown,
+  SerializedError & Partial<AxiosError>,
+  object,
+  AxiosResponse
+>;
 
 export type AxiosBaseQueryArgs = {
   getHttpClient: (api: BaseQueryApi & { extra?: any }) => AxiosObservable | AxiosInstance;
