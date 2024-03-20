@@ -1,7 +1,7 @@
 import { UnknownAction, ThunkDispatch } from '@reduxjs/toolkit';
 import { RefetchConfigOptions, SubscriptionOptions } from '@reduxjs/toolkit/dist/query/core/apiState.d';
 import { omit, range } from 'lodash';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { BaseEntity, PaginationRequest, PaginationResponse } from '../models';
 import { EntityApi, EntityMutationEndpointName } from '../types';
@@ -21,7 +21,8 @@ export const useInfiniteQuery = <
 ): typeof result => {
   const dispatch: ThunkDispatch<any, any, UnknownAction> = useDispatch();
   const [searchRequest, setSearchRequest] = useState<TRequest>(initialParams as TRequest);
-  const { data, isFetching, ...restEndpointData } = entityApi.useSearchInfiniteQuery(searchRequest, queryOptions);
+  const [searchOptions, setSearchOptions] = useState(queryOptions);
+  const { data, isFetching, ...restEndpointData } = entityApi.useSearchInfiniteQuery(searchRequest, searchOptions);
   const [isRefetching, setIsRefetching] = useState<boolean>(false);
   const [isFetchingNextPage, setIsFetchingNextPage] = useState(false);
   const [isFetchingPreviousPage, setIsFetchingPreviousPage] = useState(false);
@@ -42,10 +43,18 @@ export const useInfiniteQuery = <
     };
   }, [data]);
 
+  const changeSearchRequest = useCallback(
+    (setSearchRequestAction: SetStateAction<TRequest>) => {
+      setSearchRequest(setSearchRequestAction);
+      setSearchOptions(queryOptions);
+    },
+    [queryOptions],
+  );
+
   const fetchNextPage = useCallback(() => {
     if (hasNextPage && !isFetching) {
       setIsFetchingNextPage(true);
-      setSearchRequest(({ page = 1, ...rest }) => ({ ...rest, page: page + 1 }) as TRequest);
+      changeSearchRequest(({ page = 1, ...rest }) => ({ ...rest, page: page + 1 }) as TRequest);
     }
   }, [hasNextPage, isFetching]);
 
@@ -79,7 +88,7 @@ export const useInfiniteQuery = <
             draft.pagination.currentPage = page;
           }),
         );
-        setSearchRequest(({ ...rest }) => ({ ...rest, page }));
+        changeSearchRequest(({ ...rest }) => ({ ...rest, page }));
       }
 
       return dispatch(
@@ -114,7 +123,7 @@ export const useInfiniteQuery = <
     hasNextPage,
     hasPreviousPage,
     searchRequest,
-    setSearchRequest,
+    setSearchRequest: changeSearchRequest,
     fetchNextPage,
     fetchPreviousPage,
     refetch,
