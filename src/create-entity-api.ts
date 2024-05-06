@@ -1,6 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { ClassConstructor, instanceToPlain, plainToInstance } from 'class-transformer';
-import { merge, omit, pickBy } from 'lodash';
+import { omit, pickBy } from 'lodash';
 import { EntityTagID } from './enums';
 import { BaseEntity, EntityRequest, PaginationRequest, PaginationResponse } from './models';
 import { Pagination } from './models/pagination';
@@ -181,7 +181,6 @@ export function createEntityApi<
 
             return { id, params: request };
           },
-          merge: (existing, incoming) => merge(existing, incoming),
           transformResponse: (response: object) => createEntityInstance<TEntity>(entityConstructor, response),
           providesTags: (result) => (result ? [{ type: entityName, id: result.id }] : [entityName])
         }),
