@@ -1,6 +1,7 @@
 import { PatchCollection } from '@reduxjs/toolkit/dist/query/core/buildThunks.d';
 import { ClassConstructor } from 'class-transformer';
 import { merge } from 'lodash';
+import { EntityTagID } from '../enums';
 import { BaseEntity, EntityRequest, PaginationRequest, PaginationResponse } from '../models';
 import {
   EntityApi,
@@ -50,7 +51,10 @@ export const createEntityApiUtils = <
         return patchResults;
       }
 
-      const cachedQueries = api.util.selectInvalidatedBy(getState(), [{ type: entityName, id: entityData.id }]);
+      const cachedQueries = api.util.selectInvalidatedBy(getState(), [
+        { type: entityName, id: entityData.id },
+        { type: entityName, id: EntityTagID.LIST }
+      ]);
 
       for (const { endpointName, originalArgs } of cachedQueries) {
         const existingEntity = shouldRefetchEntity
@@ -86,7 +90,10 @@ export const createEntityApiUtils = <
         return patchResults;
       }
 
-      const cachedQueries = api.util.selectInvalidatedBy(getState(), [{ type: entityName, id }]);
+      const cachedQueries = api.util.selectInvalidatedBy(getState(), [
+        { type: entityName, id },
+        { type: entityName, id: EntityTagID.LIST }
+      ]);
 
       for (const { endpointName, originalArgs } of cachedQueries) {
         const action = api.util.updateQueryData(
