@@ -53,6 +53,7 @@ export const createEntityApiUtils = <
 
       const cachedQueries = api.util.selectInvalidatedBy(getState(), [
         { type: entityName, id: entityData.id },
+        // TODO: Remove selecting all lists once issue is fixed: https://github.com/reduxjs/redux-toolkit/issues/3583
         { type: entityName, id: EntityTagID.LIST }
       ]);
 
@@ -92,6 +93,7 @@ export const createEntityApiUtils = <
 
       const cachedQueries = api.util.selectInvalidatedBy(getState(), [
         { type: entityName, id },
+        // TODO: Remove selecting all lists once issue is fixed: https://github.com/reduxjs/redux-toolkit/issues/3583
         { type: entityName, id: EntityTagID.LIST }
       ]);
 
