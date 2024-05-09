@@ -1,7 +1,7 @@
 import { UnknownAction, ThunkDispatch } from '@reduxjs/toolkit';
 import { RefetchConfigOptions, SubscriptionOptions } from '@reduxjs/toolkit/dist/query/core/apiState.d';
-import { omit, range } from 'lodash';
-import { SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
+import { isEqual, omit, range } from 'lodash';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { BaseEntity, PaginationRequest, PaginationResponse } from '../models';
 import { EntityApi, EntityMutationEndpointName } from '../types';
@@ -43,18 +43,10 @@ export const useInfiniteQuery = <
     };
   }, [data]);
 
-  const changeSearchRequest = useCallback(
-    (setSearchRequestAction: SetStateAction<TRequest>) => {
-      setSearchRequest(setSearchRequestAction);
-      setSearchOptions(queryOptions);
-    },
-    [queryOptions],
-  );
-
   const fetchNextPage = useCallback(() => {
     if (hasNextPage && !isFetching) {
       setIsFetchingNextPage(true);
-      changeSearchRequest(({ page = 1, ...rest }) => ({ ...rest, page: page + 1 }) as TRequest);
+      setSearchRequest(({ page = 1, ...rest }) => ({ ...rest, page: page + 1 }) as TRequest);
     }
   }, [hasNextPage, isFetching]);
 
@@ -88,7 +80,7 @@ export const useInfiniteQuery = <
             draft.pagination.currentPage = page;
           }),
         );
-        changeSearchRequest(({ ...rest }) => ({ ...rest, page }));
+        setSearchRequest(({ ...rest }) => ({ ...rest, page }));
       }
 
       return dispatch(
@@ -112,6 +104,12 @@ export const useInfiniteQuery = <
     }
   }, [isFetching]);
 
+  useEffect(() => {
+    if (!isEqual(queryOptions, searchOptions)) {
+      setSearchOptions(queryOptions);
+    }
+  }, [queryOptions]);
+
   const result = {
     ...restEndpointData,
     data: items,
@@ -123,7 +121,7 @@ export const useInfiniteQuery = <
     hasNextPage,
     hasPreviousPage,
     searchRequest,
-    setSearchRequest: changeSearchRequest,
+    setSearchRequest,
     fetchNextPage,
     fetchPreviousPage,
     refetch,

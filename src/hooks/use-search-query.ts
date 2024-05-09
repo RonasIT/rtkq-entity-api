@@ -1,5 +1,6 @@
 import { RefetchConfigOptions, SubscriptionOptions } from '@reduxjs/toolkit/dist/query/core/apiState.d';
-import { SetStateAction, useCallback, useEffect, useState } from 'react';
+import { isEqual } from 'lodash';
+import { useEffect, useState } from 'react';
 import { BaseEntity, PaginationRequest, PaginationResponse } from '../models';
 import { EntityApi, EntityMutationEndpointName } from '../types';
 
@@ -22,19 +23,17 @@ export const useSearchQuery = <
     refetch();
   };
 
-  const changeSearchRequest = useCallback(
-    (setSearchRequestAction: SetStateAction<TRequest>) => {
-      setSearchRequest(setSearchRequestAction);
-      setSearchOptions(queryOptions);
-    },
-    [queryOptions],
-  );
-
   useEffect(() => {
     if (!isFetching) {
       setIsRefetching(false);
     }
   }, [isFetching]);
+
+  useEffect(() => {
+    if (!isEqual(queryOptions, searchOptions)) {
+      setSearchOptions(queryOptions);
+    }
+  }, [queryOptions]);
 
   const result = {
     ...restEndpointData,
@@ -42,7 +41,7 @@ export const useSearchQuery = <
     isRefetching,
     refetch: handleRefetch,
     searchRequest,
-    setSearchRequest: changeSearchRequest
+    setSearchRequest
   };
 
   return result;
