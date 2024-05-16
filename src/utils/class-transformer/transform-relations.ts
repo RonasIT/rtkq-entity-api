@@ -1,10 +1,18 @@
 import { Transform } from 'class-transformer';
 import { uniq } from 'lodash';
 
-function normalizeRelations(value: Array<string>, delimiter = '.'): Array<string> {
+function normalizeRelations(relations: Array<string>, delimiter = '.'): Array<string> {
   return uniq(
-    value.filter(
-      (relation) => !value.find((r) => r.includes(delimiter) && r.includes(relation) && r.length > relation.length),
+    relations.filter(
+      (relation) => !relations.find((otherRelation) => {
+          const relationSegments = relation.split(delimiter);
+          const otherRelationSegments = otherRelation.split(delimiter);
+
+          return (
+            otherRelationSegments.length > relationSegments.length &&
+            relationSegments.every((segment, index) => otherRelationSegments[index] === segment)
+          );
+        }),
     ),
   ).sort();
 }
