@@ -6,6 +6,9 @@ import { useDispatch } from 'react-redux';
 import { BaseEntity, PaginationRequest, PaginationResponse } from '../models';
 import { EntityApi, EntityMutationEndpointName } from '../types';
 
+/**
+ * @deprecated This hook will be removed. Instead, use 'useSearchInfiniteQuery' hook in your entity API directly
+ */
 export const useInfiniteQuery = <
   TEntity extends BaseEntity,
   TRequest extends PaginationRequest,
