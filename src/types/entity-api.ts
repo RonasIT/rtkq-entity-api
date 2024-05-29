@@ -9,6 +9,7 @@ import { NoInfer } from '@reduxjs/toolkit/dist/tsHelpers.d';
 import { Api, MutationDefinition, QueryDefinition } from '@reduxjs/toolkit/query/react';
 import { BaseEntity, EntityRequest, PaginationRequest, PaginationResponse } from '../models';
 import { BaseQueryFunction } from '../utils';
+import { EntityApiCustomHooks } from './custom-hooks';
 import { EntityApiUtils } from './entity-api-utils';
 import { EntityPartial } from './entity-partial';
 
@@ -45,14 +46,18 @@ export type EntityApi<
   injectEndpoints<TNewDefinitions extends EndpointDefinitions>(_: {
     endpoints: (build: EndpointBuilder<BaseQueryFunction, string, string>) => TNewDefinitions;
     overrideExisting?: boolean;
-  }): EntityApi<
-    TEntity,
-    TSearchRequest,
-    TEntityRequest,
-    TSearchResponse,
-    TOmitEndpoints,
-    TEndpointDefinitions & TNewDefinitions
-  >;
+  }): Omit<
+    EntityApi<
+      TEntity,
+      TSearchRequest,
+      TEntityRequest,
+      TSearchResponse,
+      TOmitEndpoints,
+      TEndpointDefinitions & TNewDefinitions
+    >,
+    keyof EntityApiCustomHooks
+  > &
+    EntityApiCustomHooks<TEntity, TSearchRequest, TSearchResponse>;
 
   enhanceEndpoints<TNewTagTypes extends string = never, TNewDefinitions extends EndpointDefinitions = never>(_: {
     addTagTypes?: Array<TNewTagTypes>;
@@ -65,14 +70,18 @@ export type EntityApi<
           [K in keyof NewDefinitions]?: Partial<NewDefinitions[K]> | ((definition: NewDefinitions[K]) => void);
         }
       : never;
-  }): EntityApi<
-    TEntity,
-    TSearchRequest,
-    TEntityRequest,
-    TSearchResponse,
-    TOmitEndpoints,
-    TEndpointDefinitions | TNewDefinitions
-  >;
+  }): Omit<
+    EntityApi<
+      TEntity,
+      TSearchRequest,
+      TEntityRequest,
+      TSearchResponse,
+      TOmitEndpoints,
+      TEndpointDefinitions | TNewDefinitions
+    >,
+    keyof EntityApiCustomHooks
+  > &
+    EntityApiCustomHooks<TEntity, TSearchRequest, TSearchResponse>;
 } & { util: EntityApiUtils<TEntity, TSearchRequest> };
 
 export type EntityEndpointName = keyof EntityEndpointsDefinitions<BaseEntity>;

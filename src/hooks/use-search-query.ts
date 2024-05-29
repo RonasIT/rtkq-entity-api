@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react';
 import { BaseEntity, PaginationRequest, PaginationResponse } from '../models';
 import { EntityApi, EntityMutationEndpointName } from '../types';
 
+/**
+ * @deprecated This hook will be removed. Instead, use 'useSearchQuery' hook in your entity API directly
+ */
 export const useSearchQuery = <
   TEntity extends BaseEntity,
   TRequest extends PaginationRequest,

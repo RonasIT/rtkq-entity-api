@@ -1,6 +1,6 @@
 import { ThunkDispatch, UnknownAction } from '@reduxjs/toolkit';
 import { RefetchConfigOptions, SubscriptionOptions } from '@reduxjs/toolkit/dist/query/core/apiState.d';
-import { omit, range } from 'lodash';
+import { omit, range, set } from 'lodash';
 import { SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { BaseEntity, PaginationRequest, PaginationResponse } from '../models';
@@ -16,9 +16,21 @@ export const createEntityApiHooks = <
     'useSearchInfiniteQuery' | 'endpoints' | 'util'
   >,
 ): EntityApiCustomHooks<TEntity, TRequest, TPaginationResponse> => {
-  return {
+  const entityApiHooks = {
     useSearchInfiniteQuery: createInfiniteQueryHook(entityApi)
   };
+
+  // NOTE: Preserve original hooks to extend them
+  Object.keys(entityApiHooks).forEach((key) => {
+    const hookName = key as keyof EntityApiCustomHooks;
+    set(entityApi, getPreservedHookName(hookName), entityApiHooks[hookName]);
+  });
+
+  return entityApiHooks;
+};
+
+export const getPreservedHookName = (name: keyof EntityApiCustomHooks): typeof name => {
+  return `${name}Original` as typeof name;
 };
 
 export const createInfiniteQueryHook =
@@ -37,9 +49,10 @@ export const createInfiniteQueryHook =
     utilities: { checkHasNextPage?: (paginationResponse?: PaginationResponse<TEntity>) => boolean } = {},
   ): typeof result => {
     const dispatch: ThunkDispatch<any, any, UnknownAction> = useDispatch();
-    const { data, isFetching, ...restEndpointData } = (
-      (entityApi as any).useSearchInfiniteQueryOriginal as typeof entityApi.useSearchInfiniteQuery
-    )(searchRequest as TRequest, queryOptions);
+    const { data, isFetching, ...restEndpointData } = entityApi[getPreservedHookName('useSearchInfiniteQuery')](
+      searchRequest as TRequest,
+      queryOptions,
+    );
     const latestSearchRequest = restEndpointData.originalArgs || searchRequest;
     const maxFetchedPage = data?.pagination?.currentPage;
 
