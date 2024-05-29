@@ -23,7 +23,7 @@ export const createEntityApiHooks = <
   // NOTE: Preserve original hooks to extend them
   Object.keys(entityApiHooks).forEach((key) => {
     const hookName = key as keyof EntityApiCustomHooks;
-    set(entityApi, getPreservedHookName(hookName), entityApiHooks[hookName]);
+    set(entityApi, getPreservedHookName(hookName), entityApi[hookName]);
   });
 
   return entityApiHooks;

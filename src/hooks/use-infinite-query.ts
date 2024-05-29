@@ -16,7 +16,7 @@ export const useInfiniteQuery = <
 >(
   entityApi: Pick<
     EntityApi<TEntity, TRequest, any, TPaginationResponse, Array<EntityMutationEndpointName>>,
-    'useSearchInfiniteQuery' | 'endpoints' | 'util'
+    'endpoints' | 'util'
   >,
   initialParams?: TRequest,
   queryOptions?: Partial<SubscriptionOptions & RefetchConfigOptions & { skip?: boolean }>,
@@ -25,7 +25,9 @@ export const useInfiniteQuery = <
   const dispatch: ThunkDispatch<any, any, UnknownAction> = useDispatch();
   const [searchRequest, setSearchRequest] = useState<TRequest>(initialParams as TRequest);
   const [searchOptions, setSearchOptions] = useState(queryOptions);
-  const { data, isFetching, ...restEndpointData } = entityApi.useSearchInfiniteQuery(searchRequest, searchOptions);
+  const { data, isFetching, ...restEndpointData } = (
+    entityApi as EntityApi<TEntity, TRequest, any, TPaginationResponse>
+  ).useSearchInfiniteQuery(searchRequest, searchOptions);
   const [isRefetching, setIsRefetching] = useState<boolean>(false);
   const [isFetchingNextPage, setIsFetchingNextPage] = useState(false);
   const [isFetchingPreviousPage, setIsFetchingPreviousPage] = useState(false);
