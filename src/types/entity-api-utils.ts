@@ -47,13 +47,16 @@ export type EntityApiUtils<
   ) => void | Promise<void>;
   handleEntityUpdate: (
     arg: EntityPartial<TEntity> | TEntity['id'],
-    endpointLifecycle: {
+    endpointLifecycle: MutationLifecycleApi<typeof arg, BaseQueryFunction, EntityPartial<TEntity> | void, string>,
+    options?: {
       optimistic?: boolean;
       shouldRefetchEntity?: boolean;
-    } & MutationLifecycleApi<typeof arg, BaseQueryFunction, EntityPartial<TEntity> | void, string>,
+      tags?: ReadonlyArray<TagDescription<string>>;
+    },
   ) => void | Promise<void>;
   handleEntityDelete: (
     arg: TEntity['id'],
-    endpointLifecycle: { optimistic?: boolean } & MutationLifecycleApi<typeof arg, BaseQueryFunction, void, string>,
+    endpointLifecycle: MutationLifecycleApi<typeof arg, BaseQueryFunction, void, string>,
+    options?: { optimistic?: boolean; tags?: ReadonlyArray<TagDescription<string>> },
   ) => void | Promise<void>;
 };
