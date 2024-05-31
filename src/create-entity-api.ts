@@ -204,7 +204,7 @@ export function createEntityApi<
             };
           },
           async onQueryStarted(arg, api) {
-            await entityApiUtils.handleEntityUpdate(arg, { ...api, optimistic: false });
+            await entityApiUtils.patchEntityQueries(arg, api);
           },
           transformResponse: (response: object | undefined, _error, arg) => response
               ? createEntityInstance<TEntity>(entityConstructor, response)
@@ -217,7 +217,7 @@ export function createEntityApi<
             url: `${baseEndpoint}/${id}`
           }),
           async onQueryStarted(arg, api) {
-            await entityApiUtils.handleEntityDelete(arg, { ...api, optimistic: false });
+            await entityApiUtils.clearEntityQueries(arg, api);
           }
         })
       };
