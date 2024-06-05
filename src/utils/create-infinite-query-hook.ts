@@ -1,6 +1,6 @@
 import { ThunkDispatch, UnknownAction } from '@reduxjs/toolkit';
 import { RefetchConfigOptions, SubscriptionOptions } from '@reduxjs/toolkit/dist/query/core/apiState.d';
-import { omit, range, set } from 'lodash';
+import { range, set } from 'lodash';
 import { SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { BaseEntity, PaginationRequest, PaginationResponse } from '../models';
@@ -57,6 +57,7 @@ export const createInfiniteQueryHook =
     const maxFetchedPage = data?.pagination?.currentPage;
 
     const [isRefetching, setIsRefetching] = useState<boolean>(false);
+    const [isRefetchingLastPage, setIsRefetchingLastPage] = useState<boolean>(false);
     const [isFetchingNextPage, setIsFetchingNextPage] = useState(false);
     const [isFetchingPreviousPage, setIsFetchingPreviousPage] = useState(false);
     const { checkHasNextPage } = utilities;
@@ -77,13 +78,14 @@ export const createInfiniteQueryHook =
     }, [data]);
 
     const setSearchRequest = useCallback(
-      (newRequest: SetStateAction<TRequest>) => {
+      (newRequest: SetStateAction<TRequest>, options?: { forceRefetch?: boolean }) => {
+        const { forceRefetch = queryOptions?.refetchOnMountOrArgChange } = options || {};
         const request =
           typeof newRequest === 'function' ? newRequest((latestSearchRequest as TRequest) || {}) : newRequest;
 
-        dispatch(entityApi.endpoints.searchInfinite.initiate(request, { forceRefetch: true }));
+        return dispatch(entityApi.endpoints.searchInfinite.initiate(request, { forceRefetch }));
       },
-      [entityApi, latestSearchRequest],
+      [entityApi, latestSearchRequest, queryOptions?.refetchOnMountOrArgChange],
     );
 
     const fetchNextPage = useCallback(() => {
@@ -104,43 +106,34 @@ export const createInfiniteQueryHook =
       setIsRefetching(true);
 
       for (const pageNumber of range(minPage, pagination.currentPage + 1)) {
-        await dispatch(entityApi.endpoints.searchInfinite.initiate({ ...latestSearchRequest, page: pageNumber }));
+        await setSearchRequest(({ ...rest }) => ({ ...rest, page: pageNumber }), { forceRefetch: true });
       }
 
       setIsRefetching(false);
     }, [minPage, pagination, latestSearchRequest, entityApi]);
 
-    const refetchPage = useCallback(
-      async ({ page, withDataReset }: { page: number; withDataReset?: boolean }) => {
-        if (withDataReset) {
-          dispatch(
-            entityApi.util.updateQueryData('searchInfinite', omit(latestSearchRequest, 'page') as TRequest, (draft) => {
-              draft.data = [];
-              draft.minPage = page;
-              draft.pagination.currentPage = page;
-            }),
-          );
-          setSearchRequest(({ ...rest }) => ({ ...rest, page }));
-        }
+    const refetchLastPage = useCallback(() => {
+      if (maxFetchedPage) {
+        setIsRefetchingLastPage(true);
 
-        return dispatch(
-          entityApi.endpoints.searchInfinite.initiate({ ...latestSearchRequest, page: 1 }, { forceRefetch: true }),
-        );
-      },
-      [entityApi, latestSearchRequest],
-    );
+        return setSearchRequest(({ ...rest }) => ({ ...rest, page: maxFetchedPage }), { forceRefetch: true });
+      }
+
+      return;
+    }, [maxFetchedPage, setSearchRequest]);
 
     const refetch = useCallback(() => {
       setIsRefetching(true);
 
-      return refetchPage({ page: 1, withDataReset: true });
-    }, [refetchPage]);
+      return restEndpointData.refetch();
+    }, [restEndpointData.refetch]);
 
     useEffect(() => {
       if (!isFetching) {
         setIsRefetching(false);
         setIsFetchingNextPage(false);
         setIsFetchingPreviousPage(false);
+        setIsRefetchingLastPage(false);
       }
     }, [isFetching]);
 
@@ -152,12 +145,13 @@ export const createInfiniteQueryHook =
       isFetchingNextPage,
       isFetchingPreviousPage,
       isRefetching,
+      isRefetchingLastPage,
       hasNextPage,
       hasPreviousPage,
       fetchNextPage,
       fetchPreviousPage,
       refetch,
-      refetchPage,
+      refetchLastPage,
       refetchAllPages
     };
 
