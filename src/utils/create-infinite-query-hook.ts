@@ -1,7 +1,7 @@
 import { ThunkDispatch, UnknownAction } from '@reduxjs/toolkit';
 import { RefetchConfigOptions, SubscriptionOptions } from '@reduxjs/toolkit/dist/query/core/apiState.d';
 import { range, set } from 'lodash';
-import { SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { BaseEntity, PaginationRequest, PaginationResponse } from '../models';
 import { EntityApi, EntityApiCustomHooks, EntityMutationEndpointName } from '../types';
@@ -77,50 +77,43 @@ export const createInfiniteQueryHook =
       };
     }, [data]);
 
-    const setSearchRequest = useCallback(
-      (newRequest: SetStateAction<TRequest>, options?: { forceRefetch?: boolean }) => {
-        const { forceRefetch = queryOptions?.refetchOnMountOrArgChange } = options || {};
-        const request =
-          typeof newRequest === 'function' ? newRequest((latestSearchRequest as TRequest) || {}) : newRequest;
-
-        return dispatch(entityApi.endpoints.searchInfinite.initiate(request, { forceRefetch }));
+    const fetchPage = useCallback(
+      (pageNumber: number) => {
+        return dispatch(entityApi.endpoints.searchInfinite.initiate({ ...latestSearchRequest, page: pageNumber }));
       },
-      [entityApi, latestSearchRequest, queryOptions?.refetchOnMountOrArgChange],
+      [entityApi, latestSearchRequest],
     );
 
     const fetchNextPage = useCallback(() => {
       if (hasNextPage && !isFetching) {
         setIsFetchingNextPage(true);
-        setSearchRequest((currentRequest) => ({ ...currentRequest, page: (maxFetchedPage || 1) + 1 }));
+        fetchPage((maxFetchedPage || 1) + 1);
       }
-    }, [hasNextPage, isFetching, maxFetchedPage, setSearchRequest]);
+    }, [hasNextPage, isFetching, maxFetchedPage, fetchPage]);
 
     const fetchPreviousPage = useCallback(() => {
       if (hasPreviousPage && !isFetching) {
         setIsFetchingPreviousPage(true);
-        setSearchRequest((currentRequest) => ({ ...currentRequest, page: minPage - 1 }));
+        fetchPage(minPage - 1);
       }
-    }, [minPage, isFetching, hasPreviousPage, entityApi, setSearchRequest]);
+    }, [minPage, isFetching, hasPreviousPage, fetchPage]);
 
     const refetchAllPages = useCallback(async () => {
       setIsRefetching(true);
 
       for (const pageNumber of range(minPage, pagination.currentPage + 1)) {
-        await setSearchRequest(({ ...rest }) => ({ ...rest, page: pageNumber }), { forceRefetch: true });
+        await fetchPage(pageNumber);
       }
 
       setIsRefetching(false);
-    }, [minPage, pagination, latestSearchRequest, entityApi]);
+    }, [minPage, pagination?.currentPage, fetchPage]);
 
     const refetchLastPage = useCallback(() => {
       if (maxFetchedPage) {
         setIsRefetchingLastPage(true);
-
-        return setSearchRequest(({ ...rest }) => ({ ...rest, page: maxFetchedPage }), { forceRefetch: true });
+        fetchPage(maxFetchedPage);
       }
-
-      return;
-    }, [maxFetchedPage, setSearchRequest]);
+    }, [maxFetchedPage, fetchPage]);
 
     const refetch = useCallback(() => {
       setIsRefetching(true);
