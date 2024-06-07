@@ -87,9 +87,6 @@ export function createEntityApi<
               data: formattedParams
             };
           },
-          async onQueryStarted(...args) {
-            await entityApiUtils.handleEntityCreate(...args);
-          },
           transformResponse: (response: object) => createEntityInstance<TEntity>(entityConstructor, response)
         }),
 
@@ -102,9 +99,6 @@ export function createEntityApi<
             };
           },
           serializeQueryArgs: ({ queryArgs }) => prepareRequestParams(queryArgs, entitySearchRequestConstructor),
-          async onQueryStarted(...args) {
-            await entityApiUtils.handleEntitySearch(...args);
-          },
           transformResponse: (response) => {
             const { data, pagination } = plainToInstance(entitySearchResponseConstructor, response);
 
