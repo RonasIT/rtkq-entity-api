@@ -79,7 +79,12 @@ export const createInfiniteQueryHook =
 
     const fetchPage = useCallback(
       (pageNumber: number) => {
-        return dispatch(entityApi.endpoints.searchInfinite.initiate({ ...latestSearchRequest, page: pageNumber }));
+        return dispatch(
+          entityApi.endpoints.searchInfinite.initiate(
+            { ...latestSearchRequest, page: pageNumber },
+            { forceRefetch: true },
+          ),
+        );
       },
       [entityApi, latestSearchRequest],
     );
