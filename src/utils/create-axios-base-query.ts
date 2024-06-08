@@ -21,6 +21,8 @@ export type AxiosBaseQueryArgs = {
 };
 
 export const createAxiosBaseQuery = ({ getHttpClient, prepareHeaders }: AxiosBaseQueryArgs): BaseQueryFunction => {
+  let isDeprecationWarningShown = false;
+
   return async (requestConfig, api: BaseQueryApi) => {
     const extraHeaders: RawAxiosRequestHeaders = prepareHeaders
       ? await prepareHeaders(api as BaseQueryApi & { extra?: any })
@@ -32,9 +34,10 @@ export const createAxiosBaseQuery = ({ getHttpClient, prepareHeaders }: AxiosBas
     try {
       const usesAxiosObservable = httpClient instanceof AxiosObservable;
 
-      if (usesAxiosObservable) {
+      if (!isDeprecationWarningShown && usesAxiosObservable) {
+        isDeprecationWarningShown = true;
         console.warn(
-          'Support of Axios Observable is deprecated and will be removed in the next major version. Please use Axios instead',
+          'Support of Axios Observable is deprecated and will be removed in the next major version. Please use Axios instead.',
         );
       }
 
