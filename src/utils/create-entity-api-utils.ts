@@ -125,7 +125,8 @@ export const createEntityApiUtils = <
         await dispatch(api.util.upsertQueryData('get', { id: createdEntity.id }, createdEntity));
       }
     },
-    handleEntitySearch: async (request, { shouldUpsertEntityQueries = true, dispatch, queryFulfilled }) => {
+    // TODO: Transform to upsertEntityQueries
+    handleEntitySearch: async (request, { shouldUpsertEntityQueries = false, dispatch, queryFulfilled }) => {
       if (!shouldUpsertEntityQueries) {
         return;
       }

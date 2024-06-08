@@ -4,10 +4,11 @@ import { omit, pickBy } from 'lodash';
 import { EntityTagID } from './enums';
 import { BaseEntity, EntityRequest, PaginationRequest, PaginationResponse } from './models';
 import { Pagination } from './models/pagination';
-import { EntityApi, EntityEndpointName, EntityPartial } from './types';
+import { EntityApi, EntityApiCustomHooks, EntityEndpointName, EntityPartial } from './types';
 import {
   BaseQueryFunction,
   createApiCreator,
+  createEntityApiHooks,
   createEntityApiUtils,
   createEntityInstance,
   prepareRequestParams
@@ -34,7 +35,11 @@ export function createEntityApi<
   omitEndpoints?: TOmitEndpoints;
   getEntityId?: (entity: TEntity) => string | number;
   getCurrentPage?: (pagination: Pagination, request: TSearchRequest) => number;
-}): EntityApi<TEntity, TSearchRequest, TEntityRequest, TSearchResponse, typeof omitEndpoints> {
+}): Omit<
+  EntityApi<TEntity, TSearchRequest, TEntityRequest, TSearchResponse, typeof omitEndpoints>,
+  keyof EntityApiCustomHooks
+> &
+  EntityApiCustomHooks<TEntity, TSearchRequest, TSearchResponse> {
   const {
     entityName,
     baseEndpoint,
@@ -219,15 +224,20 @@ export function createEntityApi<
 
       return omit(endpoints, omitEndpoints || []);
     }
-  });
+  }) as unknown as EntityApi<TEntity, TSearchRequest, TEntityRequest, TSearchResponse>;
 
+  // Extend api util
   const entityApiUtils = createEntityApiUtils({
-    api: api as unknown as EntityApi<TEntity, TSearchRequest, TEntityRequest, TSearchResponse>,
+    api,
     entityGetRequestConstructor,
     entitySearchRequestConstructor
   });
-
   Object.assign(api.util, entityApiUtils);
 
-  return api as unknown as EntityApi<TEntity, TSearchRequest, TEntityRequest, TSearchResponse, typeof omitEndpoints>;
+  // Extend api hooks
+  const entityApiHooks = createEntityApiHooks(api);
+  Object.assign(api, entityApiHooks);
+
+  // TODO: Get rid of any below
+  return api as any;
 }
