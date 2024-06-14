@@ -2,7 +2,8 @@ import { PatchCollection } from '@reduxjs/toolkit/dist/query/core/buildThunks.d'
 import {
   LifecycleApi,
   MutationLifecycleApi,
-  QueryLifecycleApi
+  QueryLifecycleApi,
+  TagDescription
 } from '@reduxjs/toolkit/dist/query/endpointDefinitions.d';
 import { BaseEntity, EntityRequest, PaginationRequest, PaginationResponse } from '../models';
 import { BaseQueryFunction } from '../utils/create-axios-base-query';
@@ -16,21 +17,28 @@ export type EntityApiUtils<
   patchEntityQueries: (
     entityData: EntityPartial<TEntity>,
     endpointLifecycle: Pick<LifecycleApi, 'dispatch' | 'getState'>,
-    shouldRefetchEntity?: boolean,
+    options?: { shouldRefetchEntity?: boolean; tags?: ReadonlyArray<TagDescription<string>> },
   ) => Promise<Array<PatchCollection>>;
   fetchEntity: (
     id: TEntity['id'],
     params: TSearchRequest | TEntityRequest,
-    dispatch: LifecycleApi['dispatch'],
+    endpointLifecycle: Pick<LifecycleApi, 'dispatch'>,
   ) => Promise<TEntity>;
   clearEntityQueries: (
     entityId: TEntity['id'],
     endpointLifecycle: Pick<LifecycleApi, 'dispatch' | 'getState'>,
+    options?: { tags?: ReadonlyArray<TagDescription<string>> },
   ) => Promise<Array<PatchCollection>>;
+  /**
+   * @deprecated This utility will be removed. Please use 'util.upsertQueryData' if you need to prefill entity query.
+   */
   handleEntityCreate: (
     arg: Partial<TEntity>,
     endpointLifecycle: MutationLifecycleApi<typeof arg, BaseQueryFunction, TEntity | void, string>,
   ) => void | Promise<void>;
+  /**
+   * @deprecated This utility will be removed. Please use 'util.upsertQueryData' if you need to prefill entity query.
+   */
   handleEntitySearch: (
     arg: TSearchRequest,
     endpointLifecycle: {
@@ -39,13 +47,16 @@ export type EntityApiUtils<
   ) => void | Promise<void>;
   handleEntityUpdate: (
     arg: EntityPartial<TEntity> | TEntity['id'],
-    endpointLifecycle: {
+    endpointLifecycle: MutationLifecycleApi<typeof arg, BaseQueryFunction, EntityPartial<TEntity> | void, string>,
+    options?: {
       optimistic?: boolean;
       shouldRefetchEntity?: boolean;
-    } & MutationLifecycleApi<typeof arg, BaseQueryFunction, EntityPartial<TEntity> | void, string>,
+      tags?: ReadonlyArray<TagDescription<string>>;
+    },
   ) => void | Promise<void>;
   handleEntityDelete: (
     arg: TEntity['id'],
-    endpointLifecycle: { optimistic?: boolean } & MutationLifecycleApi<typeof arg, BaseQueryFunction, void, string>,
+    endpointLifecycle: MutationLifecycleApi<typeof arg, BaseQueryFunction, void, string>,
+    options?: { optimistic?: boolean; tags?: ReadonlyArray<TagDescription<string>> },
   ) => void | Promise<void>;
 };

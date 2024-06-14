@@ -87,9 +87,6 @@ export function createEntityApi<
               data: formattedParams
             };
           },
-          async onQueryStarted(...args) {
-            await entityApiUtils.handleEntityCreate(...args);
-          },
           transformResponse: (response: object) => createEntityInstance<TEntity>(entityConstructor, response)
         }),
 
@@ -102,9 +99,6 @@ export function createEntityApi<
             };
           },
           serializeQueryArgs: ({ queryArgs }) => prepareRequestParams(queryArgs, entitySearchRequestConstructor),
-          async onQueryStarted(...args) {
-            await entityApiUtils.handleEntitySearch(...args);
-          },
           transformResponse: (response) => {
             const { data, pagination } = plainToInstance(entitySearchResponseConstructor, response);
 
@@ -133,9 +127,6 @@ export function createEntityApi<
             return prepareRequestParams(omit(queryArgs, ['page']) as TSearchRequest, entitySearchRequestConstructor);
           },
           forceRefetch: ({ currentArg, previousArg }) => currentArg?.page !== previousArg?.page,
-          async onQueryStarted(...args) {
-            await entityApiUtils.handleEntitySearch(...args);
-          },
           transformResponse: (response, _, request) => {
             const { data, pagination } = plainToInstance(entitySearchResponseConstructor, response);
 
@@ -204,7 +195,7 @@ export function createEntityApi<
             };
           },
           async onQueryStarted(arg, api) {
-            await entityApiUtils.handleEntityUpdate(arg, { ...api, optimistic: false });
+            await entityApiUtils.handleEntityUpdate(arg, api, { optimistic: false });
           },
           transformResponse: (response: object | undefined, _error, arg) => response
               ? createEntityInstance<TEntity>(entityConstructor, response)
@@ -217,7 +208,7 @@ export function createEntityApi<
             url: `${baseEndpoint}/${id}`
           }),
           async onQueryStarted(arg, api) {
-            await entityApiUtils.handleEntityDelete(arg, { ...api, optimistic: false });
+            await entityApiUtils.handleEntityDelete(arg, api, { optimistic: false });
           }
         })
       };
