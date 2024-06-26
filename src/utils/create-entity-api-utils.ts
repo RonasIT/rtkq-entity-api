@@ -33,7 +33,7 @@ export const createEntityApiUtils = <
   const entityName = api.reducerPath;
 
   const entityApiUtils: EntityApiUtils<TEntity, TSearchRequest, TEntityRequest> = {
-    fetchEntity: async (id, params, dispatch) => {
+    fetchEntity: async (id, params, { dispatch }) => {
       const entityRequest = createEntityInstance<TEntityRequest>(
         entityGetRequestConstructor as ClassConstructor<TEntityRequest>,
         params,
@@ -44,22 +44,26 @@ export const createEntityApiUtils = <
 
       return await dispatch(api.endpoints.get.initiate({ id, params: entityRequest }, { forceRefetch: true })).unwrap();
     },
-    patchEntityQueries: async (entityData, { dispatch, getState }, shouldRefetchEntity) => {
+    patchEntityQueries: async (entityData, { dispatch, getState }, options = {}) => {
+      const { shouldRefetchEntity, tags } = options;
       const patchResults: Array<PatchCollection> = [];
 
       if (!entityData?.id) {
         return patchResults;
       }
 
-      const cachedQueries = api.util.selectInvalidatedBy(getState(), [
-        { type: entityName, id: entityData.id },
-        // TODO: Remove selecting all lists once issue is fixed: https://github.com/reduxjs/redux-toolkit/issues/3583
-        { type: entityName, id: EntityTagID.LIST }
-      ]);
+      const cachedQueries = api.util.selectInvalidatedBy(
+        getState(),
+        tags || [
+          { type: entityName, id: entityData.id },
+          // TODO: Remove selecting all lists once issue is fixed: https://github.com/reduxjs/redux-toolkit/issues/3583
+          { type: entityName, id: EntityTagID.LIST }
+        ],
+      );
 
       for (const { endpointName, originalArgs } of cachedQueries) {
         const existingEntity = shouldRefetchEntity
-          ? await entityApiUtils.fetchEntity(entityData.id, originalArgs?.params || originalArgs, dispatch)
+          ? await entityApiUtils.fetchEntity(entityData.id, originalArgs?.params || originalArgs, { dispatch })
           : entityData;
 
         const action = api.util.updateQueryData(
@@ -84,18 +88,21 @@ export const createEntityApiUtils = <
 
       return patchResults;
     },
-    clearEntityQueries: async (id, { dispatch, getState }) => {
+    clearEntityQueries: async (id, { dispatch, getState }, { tags } = {}) => {
       const patchResults: Array<PatchCollection> = [];
 
       if (!id) {
         return patchResults;
       }
 
-      const cachedQueries = api.util.selectInvalidatedBy(getState(), [
-        { type: entityName, id },
-        // TODO: Remove selecting all lists once issue is fixed: https://github.com/reduxjs/redux-toolkit/issues/3583
-        { type: entityName, id: EntityTagID.LIST }
-      ]);
+      const cachedQueries = api.util.selectInvalidatedBy(
+        getState(),
+        tags || [
+          { type: entityName, id },
+          // TODO: Remove selecting all lists once issue is fixed: https://github.com/reduxjs/redux-toolkit/issues/3583
+          { type: entityName, id: EntityTagID.LIST }
+        ],
+      );
 
       for (const { endpointName, originalArgs } of cachedQueries) {
         const action = api.util.updateQueryData(
@@ -107,6 +114,7 @@ export const createEntityApiUtils = <
 
               if (existingItemIndex > -1) {
                 endpointData.data.splice(existingItemIndex, 1);
+                endpointData.pagination.total--;
               }
             }
           },
@@ -118,6 +126,9 @@ export const createEntityApiUtils = <
 
       return patchResults;
     },
+    /**
+     * @deprecated This utility will be removed. Please use 'util.upsertQueryData' if you need to prefill entity query.
+     */
     handleEntityCreate: async (_args, { dispatch, queryFulfilled }) => {
       const { data: createdEntity } = await queryFulfilled;
 
@@ -125,7 +136,10 @@ export const createEntityApiUtils = <
         await dispatch(api.util.upsertQueryData('get', { id: createdEntity.id }, createdEntity));
       }
     },
-    handleEntitySearch: async (request, { shouldUpsertEntityQueries = true, dispatch, queryFulfilled }) => {
+    /**
+     * @deprecated This utility will be removed. Please use 'util.upsertQueryData' if you need to prefill entity query.
+     */
+    handleEntitySearch: async (request, { shouldUpsertEntityQueries = false, dispatch, queryFulfilled }) => {
       if (!shouldUpsertEntityQueries) {
         return;
       }
@@ -142,11 +156,16 @@ export const createEntityApiUtils = <
         dispatch(api.util.upsertQueryData('get', { id: entity.id, params: entityRequest }, entity));
       }
     },
-    handleEntityUpdate: async (arg, { optimistic, shouldRefetchEntity, dispatch, queryFulfilled, getState }) => {
+    handleEntityUpdate: async (arg, { dispatch, queryFulfilled, getState }, options) => {
+      const { optimistic, shouldRefetchEntity, tags } = options || {};
       const itemPatch = typeof arg === 'object' && arg.id ? arg : ({ id: arg } as EntityPartial<TEntity>);
 
       if (optimistic) {
-        const patches = await entityApiUtils.patchEntityQueries(itemPatch, { dispatch, getState }, shouldRefetchEntity);
+        const patches = await entityApiUtils.patchEntityQueries(
+          itemPatch,
+          { dispatch, getState },
+          { shouldRefetchEntity, tags },
+        );
 
         queryFulfilled.catch(() => {
           patches.forEach((patch) => {
@@ -159,13 +178,15 @@ export const createEntityApiUtils = <
         await entityApiUtils.patchEntityQueries(
           updatedEntityData || itemPatch,
           { dispatch, getState },
-          shouldRefetchEntity,
+          { shouldRefetchEntity, tags },
         );
       }
     },
-    handleEntityDelete: async (id, { optimistic, dispatch, queryFulfilled, getState }) => {
+    handleEntityDelete: async (id, { dispatch, queryFulfilled, getState }, options) => {
+      const { optimistic, tags } = options || {};
+
       if (optimistic) {
-        const patches = await entityApiUtils.clearEntityQueries(id, { dispatch, getState });
+        const patches = await entityApiUtils.clearEntityQueries(id, { dispatch, getState }, { tags });
 
         queryFulfilled.catch(() => {
           patches.forEach((patch) => {
@@ -175,7 +196,7 @@ export const createEntityApiUtils = <
       } else {
         await queryFulfilled;
 
-        await entityApiUtils.clearEntityQueries(id, { dispatch, getState });
+        await entityApiUtils.clearEntityQueries(id, { dispatch, getState }, { tags });
       }
     }
   };

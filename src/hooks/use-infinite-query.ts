@@ -6,6 +6,9 @@ import { useDispatch } from 'react-redux';
 import { BaseEntity, PaginationRequest, PaginationResponse } from '../models';
 import { EntityApi, EntityMutationEndpointName } from '../types';
 
+/**
+ * @deprecated This hook will be removed. Instead, use 'useSearchInfiniteQuery' hook in your entity API directly
+ */
 export const useInfiniteQuery = <
   TEntity extends BaseEntity,
   TRequest extends PaginationRequest,
@@ -13,7 +16,7 @@ export const useInfiniteQuery = <
 >(
   entityApi: Pick<
     EntityApi<TEntity, TRequest, any, TPaginationResponse, Array<EntityMutationEndpointName>>,
-    'useSearchInfiniteQuery' | 'endpoints' | 'util'
+    'endpoints' | 'util'
   >,
   initialParams?: TRequest,
   queryOptions?: Partial<SubscriptionOptions & RefetchConfigOptions & { skip?: boolean }>,
@@ -22,7 +25,9 @@ export const useInfiniteQuery = <
   const dispatch: ThunkDispatch<any, any, UnknownAction> = useDispatch();
   const [searchRequest, setSearchRequest] = useState<TRequest>(initialParams as TRequest);
   const [searchOptions, setSearchOptions] = useState(queryOptions);
-  const { data, isFetching, ...restEndpointData } = entityApi.useSearchInfiniteQuery(searchRequest, searchOptions);
+  const { data, isFetching, ...restEndpointData } = (
+    entityApi as EntityApi<TEntity, TRequest, any, TPaginationResponse>
+  ).useSearchInfiniteQuery(searchRequest, searchOptions);
   const [isRefetching, setIsRefetching] = useState<boolean>(false);
   const [isFetchingNextPage, setIsFetchingNextPage] = useState(false);
   const [isFetchingPreviousPage, setIsFetchingPreviousPage] = useState(false);

@@ -4,10 +4,11 @@ import { omit, pickBy } from 'lodash';
 import { EntityTagID } from './enums';
 import { BaseEntity, EntityRequest, PaginationRequest, PaginationResponse } from './models';
 import { Pagination } from './models/pagination';
-import { EntityApi, EntityEndpointName, EntityPartial } from './types';
+import { EntityApi, EntityApiCustomHooks, EntityEndpointName, EntityPartial } from './types';
 import {
   BaseQueryFunction,
   createApiCreator,
+  createEntityApiHooks,
   createEntityApiUtils,
   createEntityInstance,
   prepareRequestParams
@@ -34,7 +35,11 @@ export function createEntityApi<
   omitEndpoints?: TOmitEndpoints;
   getEntityId?: (entity: TEntity) => string | number;
   getCurrentPage?: (pagination: Pagination, request: TSearchRequest) => number;
-}): EntityApi<TEntity, TSearchRequest, TEntityRequest, TSearchResponse, typeof omitEndpoints> {
+}): Omit<
+  EntityApi<TEntity, TSearchRequest, TEntityRequest, TSearchResponse, typeof omitEndpoints>,
+  keyof EntityApiCustomHooks
+> &
+  EntityApiCustomHooks<TEntity, TSearchRequest, TSearchResponse> {
   const {
     entityName,
     baseEndpoint,
@@ -82,9 +87,6 @@ export function createEntityApi<
               data: formattedParams
             };
           },
-          async onQueryStarted(...args) {
-            await entityApiUtils.handleEntityCreate(...args);
-          },
           transformResponse: (response: object) => createEntityInstance<TEntity>(entityConstructor, response)
         }),
 
@@ -97,9 +99,6 @@ export function createEntityApi<
             };
           },
           serializeQueryArgs: ({ queryArgs }) => prepareRequestParams(queryArgs, entitySearchRequestConstructor),
-          async onQueryStarted(...args) {
-            await entityApiUtils.handleEntitySearch(...args);
-          },
           transformResponse: (response) => {
             const { data, pagination } = plainToInstance(entitySearchResponseConstructor, response);
 
@@ -128,9 +127,6 @@ export function createEntityApi<
             return prepareRequestParams(omit(queryArgs, ['page']) as TSearchRequest, entitySearchRequestConstructor);
           },
           forceRefetch: ({ currentArg, previousArg }) => currentArg?.page !== previousArg?.page,
-          async onQueryStarted(...args) {
-            await entityApiUtils.handleEntitySearch(...args);
-          },
           transformResponse: (response, _, request) => {
             const { data, pagination } = plainToInstance(entitySearchResponseConstructor, response);
 
@@ -199,7 +195,7 @@ export function createEntityApi<
             };
           },
           async onQueryStarted(arg, api) {
-            await entityApiUtils.handleEntityUpdate(arg, { ...api, optimistic: false });
+            await entityApiUtils.handleEntityUpdate(arg, api, { optimistic: false });
           },
           transformResponse: (response: object | undefined, _error, arg) => response
               ? createEntityInstance<TEntity>(entityConstructor, response)
@@ -212,22 +208,27 @@ export function createEntityApi<
             url: `${baseEndpoint}/${id}`
           }),
           async onQueryStarted(arg, api) {
-            await entityApiUtils.handleEntityDelete(arg, { ...api, optimistic: false });
+            await entityApiUtils.handleEntityDelete(arg, api, { optimistic: false });
           }
         })
       };
 
       return omit(endpoints, omitEndpoints || []);
     }
-  });
+  }) as unknown as EntityApi<TEntity, TSearchRequest, TEntityRequest, TSearchResponse>;
 
+  // Extend api util
   const entityApiUtils = createEntityApiUtils({
-    api: api as unknown as EntityApi<TEntity, TSearchRequest, TEntityRequest, TSearchResponse>,
+    api,
     entityGetRequestConstructor,
     entitySearchRequestConstructor
   });
-
   Object.assign(api.util, entityApiUtils);
 
-  return api as unknown as EntityApi<TEntity, TSearchRequest, TEntityRequest, TSearchResponse, typeof omitEndpoints>;
+  // Extend api hooks
+  const entityApiHooks = createEntityApiHooks(api);
+  Object.assign(api, entityApiHooks);
+
+  // TODO: Get rid of any below
+  return api as any;
 }
