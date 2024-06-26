@@ -43,6 +43,11 @@ export class User extends BaseEntity {
 
   @Expose({ name: 'phone_number' }) // APIs support of class-trasformer decorators
   phoneNumber: string;
+
+  constructor(model: Partial<User>) {
+    super(model);
+    Object.assign(this, model);
+  }
 }
 ```
 
@@ -51,14 +56,18 @@ export class User extends BaseEntity {
 ```ts
 import { createEntityApi } from '@ronas-it/rtkq-entity-api';
 import { createAppApi } from 'your-project/utils';
-import { User } from 'your-project/models';
+import { User, UserEntityRequest, UserSearchRequest } from 'your-project/models';
 
 export const usersApi = createEntityApi({
-  baseApiCreator: createAppApi, // The APIs creator from above that shares configuration for new APIs
+  // Mandatory params
   entityName: 'user', // An entity name. Must by unique
   entityConstructor: User, // The entity model class constructor defined above
   baseEndpoint: '/users', // Endpoint, relative to base URL configured in the API creator
-  omitEndpoints: ['create', 'update', 'delete'], // Allow only 'get' and 'search' methods
+  // Optional params
+  baseApiCreator: createAppApi, // The APIs creator from above that shares configuration for new APIs
+  omitEndpoints: ['create', 'update', 'delete'], // Array to specify unimplemented endpoints
+  entityGetRequestConstructor: UserEntityRequest // Request constructor for 'get' endpoint. Defaults to EntityRequest
+  entitySearchRequestConstructor: UserSearchRequest, // Request constructor for 'search' endpoint. Defaults to PaginationRequest
 });
 ```
 
