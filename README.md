@@ -106,7 +106,7 @@ Generated entity APIs provide the following [endpoints](https://redux-toolkit.js
 ### Utils
 
 In addition to [existing RTKQ utils](https://redux-toolkit.js.org/rtk-query/api/created-api/api-slice-utils),
-API instances created by `createEntityApi` have the follwing utils in `yourApi.util`:
+API instances created by `createEntityApi` have the following utils in `yourApi.util`:
 
 1. `fetchEntity` - util fetches single entity data using `GET /{baseEndpoint}/{id}` with optional params.
    Maybe useful in combination with other utils when customizing [onQueryStarted](https://redux-toolkit.js.org/rtk-query/api/createApi#onquerystarted) behavior. Example:
@@ -217,4 +217,58 @@ removeFromFavorite: builder.mutation<void, number>({
     await someItemApi.util.handleEntityDelete(arg, apiLifecycle, { tags: [{ type: 'item', id: 'favorites' }] });
   }
 })
+```
+
+### Store Utils
+
+1. `createStoreInitializer` - this util is used for creating the application's `initStore`. It takes as arguments: `rootState`, `middlewares`(array), and `enhancers`(array). Example:
+
+```ts
+// Root reducer - an object with the app's different reducers
+const rootReducer = {
+  [authApi.reducerPath]: authApi.reducer,
+};
+
+// Array of the app's middlewares
+const middlewares = [authApi.middleware];
+
+export const initStore = createStoreInitializer({
+  rootReducer: rootReducer as unknown as Reducer<StateFromReducersMapObject<OmitIndexSignature<typeof rootReducer>>>,
+  middlewares,
+  // Array of the app's enhancers
+  enhancers: [...reactotronEnhancer],
+});
+
+export const store = initStore();
+```
+
+2. `StoreActions.init` - a Redux action created for performing actions at the start of the application's lifecycle. It is called in the main application component `App`:
+
+```ts
+function App(): ReactElement {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(StoreActions.init());
+  }, []);
+
+  return (
+    <Stack>
+      <Stack.Screen name='index' options={{ headerShown: false }} />
+    </Stack>
+  );
+}
+```
+
+And then it is used in some middleware:
+
+```ts
+userSettingsListenerMiddleware.startListening({
+  actionCreator: StoreActions.init,
+  effect: async (_, { dispatch }) => {
+    const language = await appStorageService.language.get();
+
+    language && dispatch(userSettingsActions.setSystemLanguage(language as LanguageCode));
+  },
+});
 ```
