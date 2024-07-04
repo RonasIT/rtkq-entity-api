@@ -238,7 +238,7 @@ const rootReducer = {
 const middlewares = [authApi.middleware];
 
 export const initStore = createStoreInitializer({
-  rootReducer: rootReducer as unknown as Reducer<StateFromReducersMapObject<OmitIndexSignature<typeof rootReducer>>>,
+  rootReducer: rootReducer as unknown as Reducer<AppState>,
   middlewares,
   // Array of the app's enhancers
   enhancers: [...reactotronEnhancer],
