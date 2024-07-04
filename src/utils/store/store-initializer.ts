@@ -1,20 +1,6 @@
-import {
-  Action,
-  configureStore,
-  Reducer,
-  StateFromReducersMapObject,
-  Store as ToolkitStore,
-  Middleware,
-  EnhancedStore,
-  StoreEnhancer
-} from '@reduxjs/toolkit';
-import { OmitIndexSignature } from 'type-fest';
+import { configureStore, Reducer, Middleware, EnhancedStore, StoreEnhancer } from '@reduxjs/toolkit';
 
-export type AppStateFromRootReducer<TRootReducer> = StateFromReducersMapObject<OmitIndexSignature<TRootReducer>>;
-
-export type AppToolkitStore<TRootReducer> = ToolkitStore<AppStateFromRootReducer<TRootReducer>, Action, Middleware>;
-
-export type CreateStoreInitializerArgs<T extends object> = {
+type CreateStoreInitializerArgs<T extends object> = {
   rootReducer: Reducer<T>;
   middlewares?: Array<Middleware>;
   enhancers?: Array<StoreEnhancer>;
