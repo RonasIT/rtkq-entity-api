@@ -221,7 +221,7 @@ removeFromFavorite: builder.mutation<void, number>({
 
 ### Store Utils
 
-1. `createStoreInitializer` - this util is used for creating the application's `initStore`. It takes as arguments: `rootState`, `middlewares`(array), and `enhancers`(array). Example:
+1. `createStoreInitializer` - this util is used for creating the application's `initStore`. It takes as arguments: `rootReducer`, `middlewares`(array), and `enhancers`(array). Example:
 
 ```ts
 // Root reducer - an object with the app's different reducers
