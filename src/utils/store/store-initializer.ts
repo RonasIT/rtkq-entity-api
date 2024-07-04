@@ -1,4 +1,14 @@
-import { configureStore, Reducer, Middleware, EnhancedStore, StoreEnhancer } from '@reduxjs/toolkit';
+import {
+  configureStore,
+  Reducer,
+  Middleware,
+  EnhancedStore,
+  StoreEnhancer,
+  StateFromReducersMapObject
+} from '@reduxjs/toolkit';
+import { OmitIndexSignature } from 'type-fest';
+
+export type AppStateFromRootReducer<TRootReducer> = StateFromReducersMapObject<OmitIndexSignature<TRootReducer>>;
 
 type CreateStoreInitializerArgs<T extends object> = {
   rootReducer: Reducer<T>;

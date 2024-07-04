@@ -221,9 +221,14 @@ removeFromFavorite: builder.mutation<void, number>({
 
 ### Store Utils
 
-1. `createStoreInitializer` - this util is used for creating the application's `initStore`. It takes as arguments: `rootReducer`, `middlewares`(array), and `enhancers`(array). Example:
+1. `createStoreInitializer` - this util is used for creating the application's `initStore`. It takes as arguments: `rootReducer`, `middlewares`(array), and `enhancers`(array).
+   This util also contains a helper type `AppStateFromRootReducer<TRootReducer>` for creating the type `AppState`.
+   Example:
 
 ```ts
+// Create the AppState type with the help of AppStateFromRootReducer
+export type AppState = AppStateFromRootReducer<typeof rootReducer>;
+
 // Root reducer - an object with the app's different reducers
 const rootReducer = {
   [authApi.reducerPath]: authApi.reducer,
