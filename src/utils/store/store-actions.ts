@@ -1,5 +1,5 @@
 import { createAction } from '@reduxjs/toolkit';
 
-export class StoreActions {
-  public static init = createAction('appState/init');
-}
+export const storeActions = {
+  init: createAction('appState/init')
+};

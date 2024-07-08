@@ -237,7 +237,7 @@ const rootReducer = {
 // Array of the app's middlewares
 const middlewares = [authApi.middleware];
 
-export const initStore = createStoreInitializer({
+const initStore = createStoreInitializer({
   rootReducer: rootReducer as unknown as Reducer<AppState>,
   middlewares,
   // Array of the app's enhancers
@@ -247,29 +247,32 @@ export const initStore = createStoreInitializer({
 export const store = initStore();
 ```
 
-2. `StoreActions.init` - a Redux action created for performing actions at the start of the application's lifecycle. It is called in the main application component `App`:
+2. `storeActions.init` - a Redux action created for performing actions at the start of the application's lifecycle. It should be dispatched on mount of root application component `App`:
 
 ```ts
+import { store } from '@your-app/mobile/shared/data-access/store';
+import { storeActions } from '@ronas-it/rtkq-entity-api';
+
 function App(): ReactElement {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(StoreActions.init());
+    dispatch(storeActions.init());
   }, []);
 
   return (
-    <Stack>
-      <Stack.Screen name='index' options={{ headerShown: false }} />
-    </Stack>
+    <Provider store={store}>
+      ...
+    </Provider>
   );
 }
 ```
 
-And then it is used in some middleware:
+And then it can be used in some side effect, for example:
 
 ```ts
 userSettingsListenerMiddleware.startListening({
-  actionCreator: StoreActions.init,
+  actionCreator: storeActions.init,
   effect: async (_, { dispatch }) => {
     const language = await appStorageService.language.get();
 
