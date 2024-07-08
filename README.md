@@ -106,7 +106,7 @@ Generated entity APIs provide the following [endpoints](https://redux-toolkit.js
 ### Utils
 
 In addition to [existing RTKQ utils](https://redux-toolkit.js.org/rtk-query/api/created-api/api-slice-utils),
-API instances created by `createEntityApi` have the follwing utils in `yourApi.util`:
+API instances created by `createEntityApi` have the following utils in `yourApi.util`:
 
 1. `fetchEntity` - util fetches single entity data using `GET /{baseEndpoint}/{id}` with optional params.
    Maybe useful in combination with other utils when customizing [onQueryStarted](https://redux-toolkit.js.org/rtk-query/api/createApi#onquerystarted) behavior. Example:
@@ -217,4 +217,66 @@ removeFromFavorite: builder.mutation<void, number>({
     await someItemApi.util.handleEntityDelete(arg, apiLifecycle, { tags: [{ type: 'item', id: 'favorites' }] });
   }
 })
+```
+
+### Store Utils
+
+1. `createStoreInitializer` - this util is used for creating the application's `initStore`. It takes as arguments: `rootReducer`, `middlewares`(array), and `enhancers`(array).
+   This util also contains a helper type `AppStateFromRootReducer<TRootReducer>` for creating the type `AppState`.
+   Example:
+
+```ts
+// Create the AppState type with the help of AppStateFromRootReducer
+export type AppState = AppStateFromRootReducer<typeof rootReducer>;
+
+// Root reducer - an object with the app's different reducers
+const rootReducer = {
+  [authApi.reducerPath]: authApi.reducer,
+};
+
+// Array of the app's middlewares
+const middlewares = [authApi.middleware];
+
+const initStore = createStoreInitializer({
+  rootReducer: rootReducer as unknown as Reducer<AppState>,
+  middlewares,
+  // Array of the app's enhancers
+  enhancers: [...reactotronEnhancer],
+});
+
+export const store = initStore();
+```
+
+2. `storeActions.init` - a Redux action created for performing actions at the start of the application's lifecycle. It should be dispatched on mount of root application component `App`:
+
+```ts
+import { store } from '@your-app/mobile/shared/data-access/store';
+import { storeActions } from '@ronas-it/rtkq-entity-api';
+
+function App(): ReactElement {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(storeActions.init());
+  }, []);
+
+  return (
+    <Provider store={store}>
+      ...
+    </Provider>
+  );
+}
+```
+
+And then it can be used in some side effect, for example:
+
+```ts
+userSettingsListenerMiddleware.startListening({
+  actionCreator: storeActions.init,
+  effect: async (_, { dispatch }) => {
+    const language = await appStorageService.language.get();
+
+    language && dispatch(userSettingsActions.setSystemLanguage(language as LanguageCode));
+  },
+});
 ```
