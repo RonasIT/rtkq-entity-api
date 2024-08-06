@@ -3,6 +3,11 @@ import { immerable } from 'immer';
 import { DateTime } from 'luxon';
 import { TransformDate } from '../utils/class-transformer';
 
+/**
+ * Base class for used with API entities.
+ *
+ * @template TID - The type of the entity ID.
+ */
 export abstract class BaseEntity<TID = string | number> {
   public [immerable] = true;
 
