@@ -109,7 +109,7 @@ In addition to [existing RTKQ utils](https://redux-toolkit.js.org/rtk-query/api/
 API instances created by `createEntityApi` have the following utils in `yourApi.util`:
 
 1. `fetchEntity` - util fetches single entity data using `GET /{baseEndpoint}/{id}` with optional params.
-   Maybe useful in combination with other utils when customizing [onQueryStarted](https://redux-toolkit.js.org/rtk-query/api/createApi#onquerystarted) behavior. Example:
+   May be useful in combination with other utilities when customizing [onQueryStarted](https://redux-toolkit.js.org/rtk-query/api/createApi#onquerystarted) behavior. Example:
 
 ```ts
 // In some mutation in 'someItemApi':
@@ -155,7 +155,7 @@ markAsFavorite: builder.mutation<void, number>({
 ```
 
 3. `clearEntityQueries` - this util can be used to remove some entity data from queries it is presented.
-   Can be useful to perform pessimistic/optimistic delete. Example of use:
+   Can be useful to perform pessimistic/optimistic deletion. Example of use:
 
 ```ts
 // Some `removeFromFavorite` mutation in some `someItemApi`:

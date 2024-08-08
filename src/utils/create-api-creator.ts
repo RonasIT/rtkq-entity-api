@@ -7,7 +7,7 @@ import { BaseQueryFunction } from './create-axios-base-query';
  * Creates a function that creates RTK Query API with common options.
  *
  * @template T - Options for RTK Query API `createApi`.
- * @param {T} commonCreateApiOptions - common options for RTK Query API `createApi`, require `baseQuery` function.
+ * @param {T} commonCreateApiOptions - common options for RTK Query API `createApi`, requires `baseQuery` function.
  * @returns {function} - A function that creates RTK Query API with
  * `commonCreateApiOptions` and additional options passed in arguments.
  */

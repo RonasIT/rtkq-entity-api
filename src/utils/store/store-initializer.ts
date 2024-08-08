@@ -22,13 +22,13 @@ type CreateStoreInitializerArgs<T extends object> = {
 };
 
 /**
- * Util that used for creating the application's initStore.
+ * Utility that creates a function, initializing a store for an application.
  *
  * @template State - The type of the application state.
  * @param {CreateStoreInitializerArgs<State>} args - The arguments for creating the store.
  * @param {Reducer<State>} args.rootReducer - The root reducer function.
- * @param {Array<Middleware>} [args.middlewares] - The middlewares for the store.
- * @param {Array<StoreEnhancer>} [args.enhancers] - The enhancers for the store.
+ * @param {Array<Middleware>} [args.middlewares=[]] - The middlewares for the store.
+ * @param {Array<StoreEnhancer>} [args.enhancers=[]] - The enhancers for the store.
  * @returns {(context?: unknown) => EnhancedStore<State>} - The function to initialize the store.
  */
 export function createStoreInitializer<State extends object>({
