@@ -31,7 +31,7 @@ import {
  * @param {ClassConstructor<TSearchRequest> | typeof PaginationRequest} [options.entitySearchRequestConstructor=PaginationRequest] - The search request class constructor.
  * @param {ClassConstructor<TEntityRequest> | typeof EntityRequest} [options.entityGetRequestConstructor=EntityRequest] - The get request class constructor.
  * @param {ClassConstructor<TSearchResponse> | typeof PaginationResponse} [options.entitySearchResponseConstructor=PaginationResponse] - The search response class constructor.
- * @param {Array<EntityEndpointName>} [options.omitEndpoints] - The array of endpoints to omit. Defaults to never.
+ * @param {Array<EntityEndpointName>} [options.omitEndpoints=[]] - The array of endpoints to omit.
  * @param {((item: TEntity) => string | number) | undefined} [options.getEntityId=((item) => item.id)] - The function to get entity id.
  * @param {((pagination: Pagination, request: TSearchRequest) => number) | undefined} [options.getCurrentPage=((pagination) => pagination.currentPage)] - The function to get current page.
  * @returns {Omit<EntityApi<TEntity, TSearchRequest, TEntityRequest, TSearchResponse, typeof omitEndpoints>, keyof EntityApiCustomHooks> & EntityApiCustomHooks<TEntity, TSearchRequest, TSearchResponse>} The entity API.
@@ -154,7 +154,7 @@ export function createEntityApi<
         /**
          * Creates a query endpoint for infinite searching entities. Behaves similar to `search`:
          * - A query endpoint that requests `GET /{baseEndpoint}` for searching entities.
-         * - Accepts request params described by `PaginationRequest` and returns `PaginationResponse`.
+         * - Accepts request params described by `entitySearchRequestConstructor` and returns `entitySearchResponseConstructor` extending `PaginationRequest` and `PaginationResponse` respectively.
          * But accumulates data from newly requested pages.
          * This query can be used with `useSearchInfiniteQuery` hook to implement infinite scrolling lists.
          * It supports loading data in both directions using `fetchNextPage` and `fetchPreviousPage` callbacks, and provides other useful props.
