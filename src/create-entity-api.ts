@@ -31,7 +31,7 @@ import {
  * @param {ClassConstructor<TSearchRequest> | typeof PaginationRequest} [options.entitySearchRequestConstructor=PaginationRequest] - The search request class constructor.
  * @param {ClassConstructor<TEntityRequest> | typeof EntityRequest} [options.entityGetRequestConstructor=EntityRequest] - The get request class constructor.
  * @param {ClassConstructor<TSearchResponse> | typeof PaginationResponse} [options.entitySearchResponseConstructor=PaginationResponse] - The search response class constructor.
- * @param {Array<EntityEndpointName>} [options.omitEndpoints=[]] - The array of endpoints to omit.
+ * @param {Array<EntityEndpointName>} [options.omitEndpoints] - The array of endpoints to omit.
  * @param {((item: TEntity) => string | number) | undefined} [options.getEntityId=((item) => item.id)] - The function to get entity id.
  * @param {((pagination: Pagination, request: TSearchRequest) => number) | undefined} [options.getCurrentPage=((pagination) => pagination.currentPage)] - The function to get current page.
  * @returns {Omit<EntityApi<TEntity, TSearchRequest, TEntityRequest, TSearchResponse, typeof omitEndpoints>, keyof EntityApiCustomHooks> & EntityApiCustomHooks<TEntity, TSearchRequest, TSearchResponse>} The entity API.
