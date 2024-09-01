@@ -12,19 +12,6 @@ import {
 } from '../types';
 import { createEntityInstance } from './create-entity-instance';
 
-/**
- * Creates entity API utilities in addition to existing RTKQ utils.
- *
- * @template TEntity - The entity model class constructor.
- * @template TSearchRequest - The search request class constructor. Defaults to PaginationRequest.
- * @template TEntityRequest - The get request class constructor. Defaults to EntityRequest.
- * @template TSearchResponse - The search response class constructor. Defaults to PaginationResponse.
- * @param {Object} options - The options for creating entity API utilities.
- * @param {EntityApi<TEntity, TSearchRequest, TEntityRequest, TSearchResponse, Array<EntityMutationEndpointName>>} options.api - The entity API to add utils.
- * @param {ClassConstructor<TSearchRequest> | typeof PaginationRequest} [options.entitySearchRequestConstructor=PaginationRequest] - The entity search request constructor.
- * @param {ClassConstructor<TEntityRequest> | typeof EntityRequest} [options.entityGetRequestConstructor=EntityRequest] - The entity get request constructor.
- * @returns {EntityApiUtils<TEntity, TSearchRequest, TEntityRequest>} The entity API utilities.
- */
 export const createEntityApiUtils = <
   TEntity extends BaseEntity,
   TSearchResponse extends PaginationResponse<TEntity> = PaginationResponse<TEntity>,
@@ -45,22 +32,7 @@ export const createEntityApiUtils = <
   >;
   const entityName = api.reducerPath;
 
-  /**
-   * The entity API utilities.
-   * @type {EntityApiUtils<TEntity, TSearchRequest, TEntityRequest>}
-   */
   const entityApiUtils: EntityApiUtils<TEntity, TSearchRequest, TEntityRequest> = {
-    /**
-     * Fetches single entity data using `GET /{baseEndpoint}/{id}` with optional params.
-     * May be useful in combination with other utilities when customizing `onQueryStarted` behavior.
-     *
-     * @method patchEntityQueries
-     * @param {TEntity['id']} id - The ID of the entity.
-     * @param {TEntityRequest} params - The entity request parameters.
-     * @param {Object} endpointLifecycle - The endpoint lifecycle.
-     * @param {Function} dispatchOptions.dispatch - The dispatch function.
-     * @returns {Promise<TEntity>} The fetched entity.
-     */
     fetchEntity: async (id, params, { dispatch }) => {
       const entityRequest = createEntityInstance<TEntityRequest>(
         entityGetRequestConstructor as ClassConstructor<TEntityRequest>,
@@ -72,19 +44,6 @@ export const createEntityApiUtils = <
 
       return await dispatch(api.endpoints.get.initiate({ id, params: entityRequest }, { forceRefetch: true })).unwrap();
     },
-    /**
-     * Patches data of an entity in all queries where it is present.
-     *
-     * @method patchEntityQueries
-     * @param {EntityPartial<TEntity>} entityData - The entity data.
-     * @param {Object} endpointLifecycle - The endpoint lifecycle.
-     * @param {Function} endpointLifecycle.dispatch - The dispatch function.
-     * @param {Function} endpointLifecycle.getState - The getState function.
-     * @param {Object} [options={}] - The options.
-     * @param {boolean} [options.shouldRefetchEntity=false] - Whether to refetch the entity.
-     * @param {Array<TagDescription>} [options.tags] - The tags.
-     * @returns {Promise<Array<PatchCollection>>} The patch results.
-     */
     patchEntityQueries: async (entityData, { dispatch, getState }, options = {}) => {
       const { shouldRefetchEntity, tags } = options;
       const patchResults: Array<PatchCollection> = [];
@@ -129,17 +88,6 @@ export const createEntityApiUtils = <
 
       return patchResults;
     },
-    /**
-     * Clears entity queries related to the provided ID. Can be useful to perform pessimistic/optimistic deletion.
-     *
-     * @param {string} id - The ID of the entity.
-     * @param {Object} endpointLifecycle - The endpoint lifecycle.
-     * @param {Function} dispatchOptions.dispatch - The dispatch function.
-     * @param {Function} dispatchOptions.getState - The getState function.
-     * @param {Object} [options={}] - The options.
-     * @param {Array<TagDescription>} [options.tags] - The tags of queries to clear.
-     * @returns {Promise<Array<PatchCollection>>} The patch results.
-     */
     clearEntityQueries: async (id, { dispatch, getState }, { tags } = {}) => {
       const patchResults: Array<PatchCollection> = [];
 
@@ -178,9 +126,6 @@ export const createEntityApiUtils = <
 
       return patchResults;
     },
-    /**
-     * @deprecated This utility will be removed. Please use 'util.upsertQueryData' if you need to prefill entity query.
-     */
     handleEntityCreate: async (_args, { dispatch, queryFulfilled }) => {
       const { data: createdEntity } = await queryFulfilled;
 
@@ -188,9 +133,6 @@ export const createEntityApiUtils = <
         await dispatch(api.util.upsertQueryData('get', { id: createdEntity.id }, createdEntity));
       }
     },
-    /**
-     * @deprecated This utility will be removed. Please use 'util.upsertQueryData' if you need to prefill entity query.
-     */
     handleEntitySearch: async (request, { shouldUpsertEntityQueries = false, dispatch, queryFulfilled }) => {
       if (!shouldUpsertEntityQueries) {
         return;
@@ -208,21 +150,6 @@ export const createEntityApiUtils = <
         dispatch(api.util.upsertQueryData('get', { id: entity.id, params: entityRequest }, entity));
       }
     },
-    /**
-     * Handles entity update.
-     * Uses patchEntityQueries under hood and intended to be used in `onQueryStarted` callback to perform optimistic/pessimistic update of entity data in queries connected by tags.
-     * If `optimistic` flag is set to true, it performs optimistic patching.
-     *
-     * @param {EntityPartial<TEntity> | TEntity['id']} arg - The entity data or id.
-     * @param {Object} endpointLifecycle - The endpoint lifecycle.
-     * @param {Object} endpointLifecycle.dispatch - The dispatch function.
-     * @param {Object} endpointLifecycle.getState - The getState function.
-     * @param {Object} [options] - The options.
-     * @param {boolean} [options.optimistic=false] - Whether to perform optimistic patching.
-     * @param {boolean} [options.shouldRefetchEntity=false] - Whether to refetch the entity.
-     * @param {Array<TagDescription>} [options.tags] - The tags.
-     * @returns {Promise<void>}
-     */
     handleEntityUpdate: async (arg, { dispatch, queryFulfilled, getState }, options) => {
       const { optimistic = false, shouldRefetchEntity = false, tags } = options || {};
       const itemPatch = typeof arg === 'object' && arg.id ? arg : ({ id: arg } as EntityPartial<TEntity>);
@@ -249,20 +176,6 @@ export const createEntityApiUtils = <
         );
       }
     },
-    /**
-     * Handles entity deletion.
-     * Uses `clearEntityQueries` internally and intended to be used in `onQueryStarted` callback to perform optimistic/pessimistic entity delete from search-like queries connected by tags.
-     * If `optimistic` flag is set to true, it performs optimistic deleting.
-     *
-     * @param {TEntity['id']} id - The ID of the entity.
-     * @param {Object} endpointLifecycle - The endpoint lifecycle.
-     * @param {Object} endpointLifecycle.dispatch - The dispatch function.
-     * @param {Object} endpointLifecycle.getState - The getState function.
-     * @param {Object} [options] - The options.
-     * @param {boolean} [options.optimistic=false] - Whether to perform optimistic deleting.
-     * @param {Array<TagDescription>} [options.tags] - The tags of queries to delete.
-     * @returns {Promise<void>} The promise.
-     */
     handleEntityDelete: async (id, { dispatch, queryFulfilled, getState }, options) => {
       const { optimistic, tags } = options || {};
 

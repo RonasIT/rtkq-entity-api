@@ -59,15 +59,15 @@ import { createAppApi } from 'your-project/utils';
 import { User, UserEntityRequest, UserSearchRequest } from 'your-project/models';
 
 export const usersApi = createEntityApi({
-  // Mandatory params
-  entityName: 'user', // An entity name. Must by unique
-  entityConstructor: User, // The entity model class constructor defined above
-  baseEndpoint: '/users', // Endpoint, relative to base URL configured in the API creator
-  // Optional params
-  baseApiCreator: createAppApi, // The APIs creator from above that shares configuration for new APIs
-  omitEndpoints: ['create', 'update', 'delete'], // Array to specify unimplemented endpoints
-  entityGetRequestConstructor: UserEntityRequest // Request constructor for 'get' endpoint. Defaults to EntityRequest
-  entitySearchRequestConstructor: UserSearchRequest, // Request constructor for 'search' endpoint. Defaults to PaginationRequest
+   // Mandatory params
+   entityName: 'user', // An entity name. Must by unique
+   entityConstructor: User, // The entity model class constructor defined above
+   baseEndpoint: '/users', // Endpoint, relative to base URL configured in the API creator
+   // Optional params
+   baseApiCreator: createAppApi, // The APIs creator from above that shares configuration for new APIs
+   omitEndpoints: ['create', 'update', 'delete'], // Array to specify unimplemented endpoints
+   entityGetRequestConstructor: UserEntityRequest // Request constructor for 'get' endpoint. Defaults to EntityRequest
+   entitySearchRequestConstructor: UserSearchRequest, // Request constructor for 'search' endpoint. Defaults to PaginationRequest
 });
 ```
 
@@ -85,9 +85,9 @@ Generated entity APIs provide the following [endpoints](https://redux-toolkit.js
    Accepts `Partial` data of entity instance you passed in `entityConstructor` when calling `createEntityApi`.
 
 2. `get` - query that requests `GET /{baseEndpoint}/{id}` to fetch single entity data.
-   Can accept optional request params which implements `EntityRequest` instance. Request shape can be extended by `entityGetRequestConstructor` property in `createEntityApi`.
+   Accepts request params described by `entityGetRequestConstructor`
 
-3. `search` - a query that requests `GET /{baseEndpoint}` to get entities list with pagination. Accepts request params described by `PaginationRequest` and returns `PaginationResponse`. Both classes can be extended to define your onw structure using `entitySearchRequestConstructor` and `entitySearchResponseConstructor` in `createEntityApi`.
+3. `search` - a query that requests `GET /{baseEndpoint}` to get entities list with pagination. Accepts request params described by `entitySearchRequestConstructor` and returns `entitySearchResponseConstructor` extending `PaginationRequest` and `PaginationResponse` respectively.
 
 4. `searchInfinite` - this query behaves similar to `search`, but accumulates data from newly requested pages.
    This query can be used with `useSearchInfiniteQuery` hook to implement infinite scrolling lists. It supports loading
@@ -130,8 +130,7 @@ async onQueryStarted(_, { queryFulfilled, dispatch }) {
 }
 ```
 
-2. `patchEntityQueries` - this util accepts partial entity data in the first argument. Useful when you need
-   to patch data of some entity in all queries it is presented.
+2. `patchEntityQueries` - this utility patches data of an entity in all queries where it is present.
 
 ```ts
 // Some `markAsFavorite` mutation in some `someItemApi`:
@@ -221,7 +220,7 @@ removeFromFavorite: builder.mutation<void, number>({
 
 ### Store Utils
 
-1. `createStoreInitializer` - this util is used for creating the application's `initStore`. It takes as arguments: `rootReducer`, `middlewares`(array), and `enhancers`(array).
+1. `createStoreInitializer` - utility that creates a function, initializing a store for an application. It takes as arguments: `rootReducer`, `middlewares`(array), and `enhancers`(array).
    This util also contains a helper type `AppStateFromRootReducer<TRootReducer>` for creating the type `AppState`.
    Example:
 
@@ -254,17 +253,17 @@ import { store } from '@your-app/mobile/shared/data-access/store';
 import { storeActions } from '@ronas-it/rtkq-entity-api';
 
 function App(): ReactElement {
-  const dispatch = useDispatch();
+   const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(storeActions.init());
-  }, []);
+   useEffect(() => {
+      dispatch(storeActions.init());
+   }, []);
 
-  return (
-    <Provider store={store}>
-      ...
-    </Provider>
-  );
+   return (
+           <Provider store={store}>
+...
+   </Provider>
+);
 }
 ```
 
