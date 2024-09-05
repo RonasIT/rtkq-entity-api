@@ -126,9 +126,6 @@ export const createEntityApiUtils = <
 
       return patchResults;
     },
-    /**
-     * @deprecated This utility will be removed. Please use 'util.upsertQueryData' if you need to prefill entity query.
-     */
     handleEntityCreate: async (_args, { dispatch, queryFulfilled }) => {
       const { data: createdEntity } = await queryFulfilled;
 
@@ -136,9 +133,6 @@ export const createEntityApiUtils = <
         await dispatch(api.util.upsertQueryData('get', { id: createdEntity.id }, createdEntity));
       }
     },
-    /**
-     * @deprecated This utility will be removed. Please use 'util.upsertQueryData' if you need to prefill entity query.
-     */
     handleEntitySearch: async (request, { shouldUpsertEntityQueries = false, dispatch, queryFulfilled }) => {
       if (!shouldUpsertEntityQueries) {
         return;
@@ -157,7 +151,7 @@ export const createEntityApiUtils = <
       }
     },
     handleEntityUpdate: async (arg, { dispatch, queryFulfilled, getState }, options) => {
-      const { optimistic, shouldRefetchEntity, tags } = options || {};
+      const { optimistic = false, shouldRefetchEntity = false, tags } = options || {};
       const itemPatch = typeof arg === 'object' && arg.id ? arg : ({ id: arg } as EntityPartial<TEntity>);
 
       if (optimistic) {
