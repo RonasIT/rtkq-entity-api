@@ -315,5 +315,5 @@ function App(): ReactElement {
 ```
 
 **Warning:** `setupRefetchListeners` works only in React Native applications.
-For frontend development it's necessary to use [setupListeners](https://redux-toolkit.js.org/rtk-query/api/setupListeners)
+For web development it's necessary to use [setupListeners](https://redux-toolkit.js.org/rtk-query/api/setupListeners)
 from Redux Toolkit.
