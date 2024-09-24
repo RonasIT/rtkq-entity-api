@@ -248,9 +248,10 @@ export const store = initStore();
 
 2. `storeActions.init` - a Redux action created for performing actions at the start of the application's lifecycle. It should be dispatched on mount of root application component `App`:
 
-```ts
+```tsx
 import { store } from '@your-app/mobile/shared/data-access/store';
 import { storeActions } from '@ronas-it/rtkq-entity-api';
+import { ReactElement } from 'react';
 
 function App(): ReactElement {
    const dispatch = useDispatch();
@@ -259,11 +260,15 @@ function App(): ReactElement {
       dispatch(storeActions.init());
    }, []);
 
-   return (
-           <Provider store={store}>
 ...
-   </Provider>
-);
+}
+
+function Root(): ReactElement {
+   return (
+     <Provider store={store}>
+        <App />
+     </Provider>
+   );
 }
 ```
 
@@ -279,3 +284,36 @@ userSettingsListenerMiddleware.startListening({
   },
 });
 ```
+
+### React Native Utils
+
+1. `setupRefetchListeners` is designed for use with React Native applications
+   to automatically refetch data when the app regains focus or reconnects to the internet.
+   It should be in a root component. Before using this utility it's necessary to install `@react-native-community/netinfo`.
+
+```bash
+npm i @react-native-community/netinfo
+```
+
+Example
+
+```tsx
+import { setupRefetchListeners } from '@ronas-it/rtkq-entity-api';
+import { useDispatch } from 'react-redux';
+
+function App(): ReactElement {
+   const dispatch = useDispatch();
+
+   useEffect(() => {
+      const unsubscribeRefetchListeners = setupRefetchListeners(dispatch);
+
+      return unsubscribeRefetchListeners;
+   }, []);
+
+   ...
+}
+```
+
+**Warning:** `setupRefetchListeners` works only in React Native applications.
+For web development it's necessary to use [setupListeners](https://redux-toolkit.js.org/rtk-query/api/setupListeners)
+from Redux Toolkit.
