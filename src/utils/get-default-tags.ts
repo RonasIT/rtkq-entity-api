@@ -9,7 +9,7 @@ import { BaseEntity, PaginationResponse } from '../models';
  * @param {Function} getEntityId - A custom function to get entity id. By default entity 'id' field is used.
  * @returns {ReadonlyArray<TagDescription<string>>} Result tags. The EntityTagID.LIST is used for entity list.
  */
-export function getDefaultTags<TEntity extends BaseEntity>(
+export function getEntityTags<TEntity extends BaseEntity>(
   entityName: string,
   response?: PaginationResponse<TEntity> | TEntity,
   customGetEntityId?: (entity: TEntity) => string | number,

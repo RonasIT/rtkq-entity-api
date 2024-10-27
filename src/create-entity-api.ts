@@ -11,7 +11,7 @@ import {
   createEntityApiHooks,
   createEntityApiUtils,
   createEntityInstance,
-  getDefaultTags,
+  getEntityTags,
   prepareRequestParams
 } from './utils';
 
@@ -177,7 +177,7 @@ export function createEntityApi<
               data: data.map((item) => createEntityInstance<TEntity>(entityConstructor, item))
             } as TSearchResponse;
           },
-          providesTags: (response) => getDefaultTags(entityName, response, getEntityId)
+          providesTags: (response) => getEntityTags(entityName, response, getEntityId)
         }),
 
         /**
@@ -212,7 +212,7 @@ export function createEntityApi<
               pagination: { ...pagination, currentPage: getCurrentPage(pagination, request) }
             } as TSearchResponse & { minPage?: number };
           },
-          providesTags: (response) => getDefaultTags(entityName, response, getEntityId),
+          providesTags: (response) => getEntityTags(entityName, response, getEntityId),
           merge: (cache, response) => {
             if (
               response.pagination.currentPage === 1 &&
@@ -258,7 +258,7 @@ export function createEntityApi<
             return { id, params: request };
           },
           transformResponse: (response: object) => createEntityInstance<TEntity>(entityConstructor, response),
-          providesTags: (response) => getDefaultTags(entityName, response, getEntityId)
+          providesTags: (response) => getEntityTags(entityName, response, getEntityId)
         }),
 
         /**
