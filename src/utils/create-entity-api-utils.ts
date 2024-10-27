@@ -1,6 +1,5 @@
 import { PatchCollection } from '@reduxjs/toolkit/dist/query/core/buildThunks.d';
 import { ClassConstructor } from 'class-transformer';
-import { merge } from 'lodash';
 import { EntityTagID } from '../enums';
 import { BaseEntity, EntityRequest, PaginationRequest, PaginationResponse } from '../models';
 import {
@@ -11,6 +10,7 @@ import {
   EntityQueryEndpointName
 } from '../types';
 import { createEntityInstance } from './create-entity-instance';
+import { mergeEntity } from './merge-entity';
 
 export const createEntityApiUtils = <
   TEntity extends BaseEntity,
@@ -72,10 +72,13 @@ export const createEntityApiUtils = <
               const existingItemIndex = endpointData.data.findIndex((item) => item.id === entityData.id);
 
               if (existingItemIndex > -1) {
-                endpointData.data[existingItemIndex] = merge(endpointData.data[existingItemIndex], existingEntity);
+                endpointData.data[existingItemIndex] = mergeEntity(
+                  endpointData.data[existingItemIndex],
+                  existingEntity,
+                );
               }
             } else {
-              merge(endpointData, existingEntity);
+              mergeEntity(endpointData as TEntity, existingEntity);
             }
           },
         );
