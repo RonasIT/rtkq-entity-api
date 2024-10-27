@@ -11,6 +11,7 @@ import {
   createEntityApiHooks,
   createEntityApiUtils,
   createEntityInstance,
+  getDefaultTags,
   prepareRequestParams
 } from './utils';
 
@@ -83,7 +84,7 @@ export function createEntityApi<
    */
   omitEndpoints?: TOmitEndpoints;
   /**
-   * The function to get entity id.
+   * A custom function to get entity id. By default entity 'id' field is used.
    */
   getEntityId?: (entity: TEntity) => string | number;
   /**
@@ -176,12 +177,7 @@ export function createEntityApi<
               data: data.map((item) => createEntityInstance<TEntity>(entityConstructor, item))
             } as TSearchResponse;
           },
-          providesTags: (result) => result?.data
-              ? [
-                  { type: entityName, id: EntityTagID.LIST },
-                  ...result.data.map((item) => ({ type: entityName, id: getEntityId(item) }))
-                ]
-              : [entityName]
+          providesTags: (response) => getDefaultTags(entityName, response, getEntityId)
         }),
 
         /**
@@ -216,12 +212,7 @@ export function createEntityApi<
               pagination: { ...pagination, currentPage: getCurrentPage(pagination, request) }
             } as TSearchResponse & { minPage?: number };
           },
-          providesTags: (result) => result?.data
-              ? [
-                  { type: entityName, id: EntityTagID.LIST },
-                  ...result.data.map((item) => ({ type: entityName, id: getEntityId(item) }))
-                ]
-              : [entityName],
+          providesTags: (response) => getDefaultTags(entityName, response, getEntityId),
           merge: (cache, response) => {
             if (
               response.pagination.currentPage === 1 &&
@@ -267,7 +258,7 @@ export function createEntityApi<
             return { id, params: request };
           },
           transformResponse: (response: object) => createEntityInstance<TEntity>(entityConstructor, response),
-          providesTags: (result) => (result ? [{ type: entityName, id: result.id }] : [entityName])
+          providesTags: (response) => getDefaultTags(entityName, response, getEntityId)
         }),
 
         /**
