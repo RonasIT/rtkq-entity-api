@@ -52,14 +52,12 @@ export const createEntityApiUtils = <
         return patchResults;
       }
 
-      const cachedQueries = api.util.selectInvalidatedBy(
-        getState(),
-        tags || [
-          { type: entityName, id: entityData.id },
-          // TODO: Remove selecting all lists once issue is fixed: https://github.com/reduxjs/redux-toolkit/issues/3583
-          { type: entityName, id: EntityTagID.LIST }
-        ],
-      );
+      const cachedQueries = api.util.selectInvalidatedBy(getState(), [
+        { type: entityName, id: entityData.id },
+        // TODO: Remove selecting all lists once issue is fixed: https://github.com/reduxjs/redux-toolkit/issues/3583
+        { type: entityName, id: EntityTagID.LIST },
+        ...(tags || [])
+      ]);
 
       for (const { endpointName, originalArgs } of cachedQueries) {
         const existingEntity = shouldRefetchEntity
@@ -95,14 +93,12 @@ export const createEntityApiUtils = <
         return patchResults;
       }
 
-      const cachedQueries = api.util.selectInvalidatedBy(
-        getState(),
-        tags || [
-          { type: entityName, id },
-          // TODO: Remove selecting all lists once issue is fixed: https://github.com/reduxjs/redux-toolkit/issues/3583
-          { type: entityName, id: EntityTagID.LIST }
-        ],
-      );
+      const cachedQueries = api.util.selectInvalidatedBy(getState(), [
+        { type: entityName, id },
+        // TODO: Remove selecting all lists once issue is fixed: https://github.com/reduxjs/redux-toolkit/issues/3583
+        { type: entityName, id: EntityTagID.LIST },
+        ...(tags || [])
+      ]);
 
       for (const { endpointName, originalArgs } of cachedQueries) {
         const action = api.util.updateQueryData(
