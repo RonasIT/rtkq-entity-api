@@ -1,7 +1,7 @@
-import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
 import { Dispatch } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import { AppState, Platform } from 'react-native';
+import type { addEventListener, fetch, NetInfoState } from '@react-native-community/netinfo';
 
 export function setupRefetchListeners(
   storeDispatch: Dispatch,
@@ -17,7 +17,14 @@ export function setupRefetchListeners(
       );
     }
 
-    if (!NetInfo?.addEventListener) {
+    let NetInfo: {
+      addEventListener: typeof addEventListener;
+      fetch: typeof fetch;
+    };
+
+    try {
+      NetInfo = require('@react-native-community/netinfo');
+    } catch (error) {
       throw new Error(
         'To use \'refetchOnReconnect\' and \'refetchOnFocus\' you must setup @react-native-community/netinfo package.',
       );
