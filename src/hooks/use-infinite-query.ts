@@ -1,5 +1,6 @@
-import { UnknownAction, ThunkDispatch } from '@reduxjs/toolkit';
-import { RefetchConfigOptions, SubscriptionOptions } from '@reduxjs/toolkit/dist/query/core/apiState.d';
+import { ThunkDispatch, UnknownAction } from '@reduxjs/toolkit';
+import { SubscriptionOptions } from '@reduxjs/toolkit/query';
+import { RefetchConfigOptions } from '@reduxjs/toolkit/src/query/core/apiState';
 import { isEqual, omit, range } from 'lodash';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';

@@ -5,3 +5,4 @@ export * from './custom-hooks';
 export * from './entity-api';
 export * from './entity-api-utils';
 export * from './entity-partial';
+export * from './lifecycle-api';

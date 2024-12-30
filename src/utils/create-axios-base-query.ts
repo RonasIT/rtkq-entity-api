@@ -1,6 +1,6 @@
 import { SerializedError } from '@reduxjs/toolkit';
 import { BaseQueryApi, BaseQueryFn } from '@reduxjs/toolkit/dist/query/index.d';
-import { MaybePromise } from '@reduxjs/toolkit/dist/query/tsHelpers.d';
+import { MaybePromise } from '@reduxjs/toolkit/src/query/tsHelpers';
 import { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, RawAxiosRequestHeaders } from 'axios';
 // TODO: Drop support for axios-observable in next major version
 import { Axios as AxiosObservable } from 'axios-observable';

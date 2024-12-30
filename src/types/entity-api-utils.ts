@@ -1,13 +1,10 @@
-import { PatchCollection } from '@reduxjs/toolkit/dist/query/core/buildThunks.d';
-import {
-  LifecycleApi,
-  MutationLifecycleApi,
-  QueryLifecycleApi,
-  TagDescription
-} from '@reduxjs/toolkit/dist/query/endpointDefinitions.d';
+import { TagDescription } from '@reduxjs/toolkit/query';
+import { MutationLifecycleApi, QueryLifecycleApi } from '@reduxjs/toolkit/src/query/core';
+import { PatchCollection } from '@reduxjs/toolkit/src/query/core/buildThunks';
 import { BaseEntity, EntityRequest, PaginationRequest, PaginationResponse } from '../models';
 import { BaseQueryFunction } from '../utils/create-axios-base-query';
 import { EntityPartial } from './entity-partial';
+import { LifecycleApi } from './lifecycle-api';
 
 export type EntityApiUtils<
   TEntity extends BaseEntity,

@@ -1,4 +1,4 @@
-import { PatchCollection } from '@reduxjs/toolkit/dist/query/core/buildThunks.d';
+import { PatchCollection } from '@reduxjs/toolkit/src/query/core/buildThunks';
 import { ClassConstructor } from 'class-transformer';
 import { EntityTagID } from '../enums';
 import { BaseEntity, EntityRequest, PaginationRequest, PaginationResponse } from '../models';
