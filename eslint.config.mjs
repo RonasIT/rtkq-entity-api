@@ -226,7 +226,7 @@ export default [
         }
       }],
 
-      '@stylistic//jsx-first-prop-new-line': ['warn', 'multiline'],
+      '@stylistic/jsx-first-prop-new-line': ['warn', 'multiline'],
       'react/prop-types': 'off',
       'import/newline-after-import': 'warn',
       'import/no-unresolved': 'warn',
