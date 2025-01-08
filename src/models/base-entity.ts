@@ -1,7 +1,7 @@
-import { Expose, Type } from 'class-transformer';
 import { immerable } from 'immer';
 import { DateTime } from 'luxon';
 import { TransformDate } from '../utils/class-transformer';
+import { Expose, Type } from 'class-transformer';
 
 /**
  * Base class for used with API entities.

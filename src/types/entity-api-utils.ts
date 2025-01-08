@@ -69,7 +69,7 @@ export type EntityApiUtils<
     endpointLifecycle: MutationLifecycleApi<typeof arg, BaseQueryFunction, TEntity | void, string>,
   ) => void | Promise<void>;
   /**
-   * @deprecated This utility will be removed. Please use 'util.upsertQueryData' if you need to prefill entity query.
+   * @deprecated This utility will be removed. Please use 'util.upsertQueryEntries' if you need to prefill entity query.
    */
   handleEntitySearch: (
     arg: TSearchRequest,
