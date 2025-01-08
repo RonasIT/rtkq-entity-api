@@ -42,7 +42,7 @@ export function createEntityApi<
   TSearchRequest extends PaginationRequest = PaginationRequest,
   TEntityRequest extends EntityRequest = EntityRequest,
   TSearchResponse extends PaginationResponse<TEntity> = PaginationResponse<TEntity>,
-  TOmitEndpoints extends Readonly<Array<EntityEndpointName>> = never,
+  TOmitEndpoints extends Readonly<Array<EntityEndpointName>> = never
 >({
   omitEndpoints,
   ...options

@@ -16,7 +16,7 @@ export const createEntityApiUtils = <
   TEntity extends BaseEntity,
   TSearchResponse extends PaginationResponse<TEntity> = PaginationResponse<TEntity>,
   TSearchRequest extends PaginationRequest = PaginationRequest,
-  TEntityRequest extends EntityRequest = EntityRequest,
+  TEntityRequest extends EntityRequest = EntityRequest
 >(options: {
   api: EntityApi<TEntity, TSearchRequest, TEntityRequest, TSearchResponse, Array<EntityMutationEndpointName>>;
   entitySearchRequestConstructor?: ClassConstructor<TSearchRequest> | typeof PaginationRequest;

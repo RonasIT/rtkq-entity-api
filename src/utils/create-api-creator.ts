@@ -2,7 +2,6 @@ import { BaseQueryFn, createApi, CreateApiOptions, EndpointDefinitions } from '@
 import { SetOptional } from 'type-fest';
 import { BaseQueryFunction } from './create-axios-base-query';
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 /**
  * Creates a function that creates RTK Query API with common options.
  *
@@ -14,7 +13,7 @@ import { BaseQueryFunction } from './create-axios-base-query';
 export const createApiCreator = <
   T extends Partial<Parameters<typeof createApi>[0]> & {
     baseQuery: BaseQueryFunction | BaseQueryFn;
-  },
+  }
 >(
   commonCreateApiOptions: T,
 ) => {
@@ -32,7 +31,7 @@ export const createApiCreator = <
     BaseQuery extends (typeof commonCreateApiOptions)['baseQuery'],
     Definitions extends EndpointDefinitions,
     ReducerPath extends string = 'api',
-    TagTypes extends string = never,
+    TagTypes extends string = never
   >(
     createApiOptions: SetOptional<CreateApiOptions<BaseQuery, Definitions, ReducerPath, TagTypes>, 'baseQuery'>,
   ) => {

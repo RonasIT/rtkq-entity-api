@@ -10,7 +10,7 @@ import { EntityApi, EntityApiCustomHooks, EntityMutationEndpointName } from '../
 export const createEntityApiHooks = <
   TEntity extends BaseEntity,
   TRequest extends PaginationRequest,
-  TPaginationResponse extends PaginationResponse<TEntity> = PaginationResponse<TEntity>,
+  TPaginationResponse extends PaginationResponse<TEntity> = PaginationResponse<TEntity>
 >(
   entityApi: Pick<
     EntityApi<TEntity, TRequest, any, TPaginationResponse, Array<EntityMutationEndpointName>>,
@@ -38,7 +38,7 @@ export const createInfiniteQueryHook =
   <
     TEntity extends BaseEntity,
     TRequest extends PaginationRequest,
-    TPaginationResponse extends PaginationResponse<TEntity> = PaginationResponse<TEntity>,
+    TPaginationResponse extends PaginationResponse<TEntity> = PaginationResponse<TEntity>
   >(
     entityApi: Pick<
       EntityApi<TEntity, TRequest, any, TPaginationResponse, Array<EntityMutationEndpointName>>,

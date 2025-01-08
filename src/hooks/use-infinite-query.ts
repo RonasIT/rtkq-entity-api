@@ -13,7 +13,7 @@ import { EntityApi, EntityMutationEndpointName } from '../types';
 export const useInfiniteQuery = <
   TEntity extends BaseEntity,
   TRequest extends PaginationRequest,
-  TPaginationResponse extends PaginationResponse<TEntity> = PaginationResponse<TEntity>,
+  TPaginationResponse extends PaginationResponse<TEntity> = PaginationResponse<TEntity>
 >(
   entityApi: Pick<
     EntityApi<TEntity, TRequest, any, TPaginationResponse, Array<EntityMutationEndpointName>>,
