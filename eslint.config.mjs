@@ -23,13 +23,10 @@ export default [
   {
     ignores: ['**/node_modules', '**/dist', 'eslint.config.mjs']
   },
-  ...compat.extends(
-    'eslint:recommended',
-    'plugin:react/recommended',
-    'prettier'
-  ),
+  ...compat.extends('plugin:react/recommended'),
   eslintConfigPrettier,
   {
+    files: ['**/*.ts', '**/*.tsx'],
     plugins: {
       '@typescript-eslint': tseslint.plugin,
       'unused-imports': unusedImports,
@@ -48,7 +45,7 @@ export default [
       sourceType: 'commonjs',
 
       parserOptions: {
-        projectService: 'tsconfig.json',
+        projectService: true,
 
         ecmaFeatures: {
           jsx: true
