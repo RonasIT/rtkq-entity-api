@@ -1,6 +1,6 @@
 {
   "name": "@ronas-it/rtkq-entity-api",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "Wrapper utilities for CRUD operations with REST APIs entities using RTK Query",
   "license": "MIT",
   "author": "Ronas IT",
@@ -38,13 +38,13 @@
   "dependencies": {
     "@reduxjs/toolkit": "2.2.6",
     "axios": "^1.6.7",
+    "axios-observable": "^2.0.0",
     "class-transformer": "^0.5.1",
+    "core-js": "^3.40.0",
     "immer": "^10.0.3",
     "lodash": "^4.17.21",
     "luxon": "^3.4.4",
-    "react-redux": "^9.1.0",
-    "reflect-metadata": "^0.2.1",
-    "axios-observable": "^2.0.0"
+    "react-redux": "^9.1.0"
   },
   "peerDependencies": {
     "@react-native-community/netinfo": "^11.4.0",
