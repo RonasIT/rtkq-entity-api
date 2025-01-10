@@ -13,7 +13,7 @@ import { BaseQueryFunction } from './create-axios-base-query';
 export const createApiCreator = <
   T extends Partial<Parameters<typeof createApi>[0]> & {
     baseQuery: BaseQueryFunction | BaseQueryFn;
-  }
+  },
 >(
   commonCreateApiOptions: T,
 ) => {
@@ -31,17 +31,19 @@ export const createApiCreator = <
     BaseQuery extends (typeof commonCreateApiOptions)['baseQuery'],
     Definitions extends EndpointDefinitions,
     ReducerPath extends string = 'api',
-    TagTypes extends string = never
+    TagTypes extends string = never,
   >(
     createApiOptions: SetOptional<CreateApiOptions<BaseQuery, Definitions, ReducerPath, TagTypes>, 'baseQuery'>,
-  ) => {
+  ): typeof api => {
     if (!commonCreateApiOptions.baseQuery && !createApiOptions.baseQuery) {
       throw new Error('Passing baseQuery is required in createApiCreator. Either pass it in commonOptions or in args');
     }
 
-    return createApi({
+    const api = createApi({
       ...commonCreateApiOptions,
-      ...createApiOptions
+      ...createApiOptions,
     } as CreateApiOptions<BaseQuery, Definitions, ReducerPath, TagTypes>);
+
+    return api;
   };
 };

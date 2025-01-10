@@ -80,7 +80,6 @@ export default [
 
       'object-shorthand': 'warn',
       '@stylistic/arrow-parens': ['warn', 'always'],
-      '@stylistic/comma-dangle': ['warn', 'never'],
       'no-var': 'warn',
       'no-dupe-class-members': 'off',
       'import/prefer-default-export': 'off',
@@ -205,7 +204,8 @@ export default [
         vars: 'all',
         varsIgnorePattern: '^_',
         argsIgnorePattern: '^_',
-        ignoreRestSiblings: true
+        ignoreRestSiblings: true,
+        caughtErrors: 'none'
       }],
 
       '@stylistic/jsx-quotes': ['warn', 'prefer-single'],
