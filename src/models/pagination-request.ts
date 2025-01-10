@@ -8,7 +8,7 @@ export class PaginationRequest<
   TRelation extends string = string,
   TOrderBy extends string = LiteralUnion<BaseOrderBy, string>,
   TWithCount extends string = string,
-  TWithAvg extends string = string
+  TWithAvg extends string = string,
 > extends EntityRequest<TRelation, TWithCount, TWithAvg> {
   @Expose()
   public query?: string;

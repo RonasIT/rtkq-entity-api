@@ -13,7 +13,7 @@ import { EntityApi, EntityMutationEndpointName } from '../types';
 export const useInfiniteQuery = <
   TEntity extends BaseEntity,
   TRequest extends PaginationRequest,
-  TPaginationResponse extends PaginationResponse<TEntity> = PaginationResponse<TEntity>
+  TPaginationResponse extends PaginationResponse<TEntity> = PaginationResponse<TEntity>,
 >(
   entityApi: Pick<
     EntityApi<TEntity, TRequest, any, TPaginationResponse, Array<EntityMutationEndpointName>>,
@@ -45,7 +45,7 @@ export const useInfiniteQuery = <
       hasNextPage: checkHasNextPage?.(data) || pagination?.currentPage < pagination?.lastPage,
       data,
       items,
-      pagination
+      pagination,
     };
   }, [data]);
 
@@ -62,7 +62,7 @@ export const useInfiniteQuery = <
       dispatch(
         entityApi.endpoints.searchInfinite.initiate({
           ...searchRequest,
-          page: minPage - 1
+          page: minPage - 1,
         }),
       );
     }
@@ -132,7 +132,7 @@ export const useInfiniteQuery = <
     fetchPreviousPage,
     refetch,
     refetchPage,
-    refetchAllPages
+    refetchAllPages,
   };
 
   return result;

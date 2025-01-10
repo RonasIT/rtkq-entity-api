@@ -9,7 +9,7 @@ import { LifecycleApi } from './lifecycle-api';
 export type EntityApiUtils<
   TEntity extends BaseEntity,
   TSearchRequest extends PaginationRequest = PaginationRequest,
-  TEntityRequest extends EntityRequest = EntityRequest
+  TEntityRequest extends EntityRequest = EntityRequest,
 > = {
   /**
    * Patches data of an entity in all queries where it is present.

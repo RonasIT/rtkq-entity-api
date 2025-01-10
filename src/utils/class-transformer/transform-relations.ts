@@ -21,11 +21,11 @@ export function TransformRelations(
   { delimiter }: { delimiter: string } = { delimiter: '.' },
 ): (target: any, key: string) => void {
   const toPlain = Transform(({ value }) => (Array.isArray(value) ? normalizeRelations(value, delimiter) : value), {
-    toPlainOnly: true
+    toPlainOnly: true,
   });
 
   const toClass = Transform(({ value }) => (Array.isArray(value) ? normalizeRelations(value, delimiter) : value), {
-    toClassOnly: true
+    toClassOnly: true,
   });
 
   return (target: any, key: string) => {

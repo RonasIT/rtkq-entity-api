@@ -11,7 +11,7 @@ import { EntityApi, EntityMutationEndpointName } from '../types';
 export const useSearchQuery = <
   TEntity extends BaseEntity,
   TRequest extends PaginationRequest,
-  TResponse extends PaginationResponse<TEntity>
+  TResponse extends PaginationResponse<TEntity>,
 >(
   entityApi: Pick<
     EntityApi<TEntity, TRequest, any, TResponse, Array<EntityMutationEndpointName>>,
@@ -50,7 +50,7 @@ export const useSearchQuery = <
     isRefetching,
     refetch: handleRefetch,
     searchRequest,
-    setSearchRequest
+    setSearchRequest,
   };
 
   return result;

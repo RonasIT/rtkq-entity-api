@@ -4,7 +4,7 @@ import { TransformRelations } from '../utils/class-transformer';
 export class EntityRequest<
   TRelation extends string = string,
   TWithCount extends string = string,
-  TWithAvg extends string = string
+  TWithAvg extends string = string,
 > {
   @TransformRelations()
   @Expose({ name: 'with' })

@@ -7,7 +7,7 @@ import {
   EntityApiUtils,
   EntityMutationEndpointName,
   EntityPartial,
-  EntityQueryEndpointName
+  EntityQueryEndpointName,
 } from '../types';
 import { createEntityInstance } from './create-entity-instance';
 import { mergeEntity } from './merge-entity';
@@ -16,7 +16,7 @@ export const createEntityApiUtils = <
   TEntity extends BaseEntity,
   TSearchResponse extends PaginationResponse<TEntity> = PaginationResponse<TEntity>,
   TSearchRequest extends PaginationRequest = PaginationRequest,
-  TEntityRequest extends EntityRequest = EntityRequest
+  TEntityRequest extends EntityRequest = EntityRequest,
 >(options: {
   api: EntityApi<TEntity, TSearchRequest, TEntityRequest, TSearchResponse, Array<EntityMutationEndpointName>>;
   entitySearchRequestConstructor?: ClassConstructor<TSearchRequest> | typeof PaginationRequest;
@@ -38,7 +38,7 @@ export const createEntityApiUtils = <
         entityGetRequestConstructor as ClassConstructor<TEntityRequest>,
         params,
         {
-          convertFromInstance: entitySearchRequestConstructor as ClassConstructor<TSearchRequest>
+          convertFromInstance: entitySearchRequestConstructor as ClassConstructor<TSearchRequest>,
         },
       );
 
@@ -56,7 +56,7 @@ export const createEntityApiUtils = <
         { type: entityName, id: entityData.id },
         // TODO: Remove selecting all lists once issue is fixed: https://github.com/reduxjs/redux-toolkit/issues/3583
         { type: entityName, id: EntityTagID.LIST },
-        ...(tags || [])
+        ...(tags || []),
       ]);
 
       for (const { endpointName, originalArgs } of cachedQueries) {
@@ -100,7 +100,7 @@ export const createEntityApiUtils = <
         { type: entityName, id },
         // TODO: Remove selecting all lists once issue is fixed: https://github.com/reduxjs/redux-toolkit/issues/3583
         { type: entityName, id: EntityTagID.LIST },
-        ...(tags || [])
+        ...(tags || []),
       ]);
 
       for (const { endpointName, originalArgs } of cachedQueries) {
@@ -191,7 +191,7 @@ export const createEntityApiUtils = <
 
         await entityApiUtils.clearEntityQueries(id, { dispatch, getState }, { tags });
       }
-    }
+    },
   };
 
   return entityApiUtils;

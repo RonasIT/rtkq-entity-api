@@ -4,7 +4,7 @@ import {
   Middleware,
   EnhancedStore,
   StoreEnhancer,
-  StateFromReducersMapObject
+  StateFromReducersMapObject,
 } from '@reduxjs/toolkit';
 import { OmitIndexSignature } from 'type-fest';
 
@@ -34,7 +34,7 @@ type CreateStoreInitializerArgs<T extends object> = {
 export function createStoreInitializer<State extends object>({
   rootReducer,
   middlewares = [],
-  enhancers = []
+  enhancers = [],
 }: CreateStoreInitializerArgs<State>) {
   /**
    * Initializes the Redux store.
@@ -47,9 +47,9 @@ export function createStoreInitializer<State extends object>({
       reducer: rootReducer as unknown as Reducer<State>,
       middleware: (getDefaultMiddleware) => getDefaultMiddleware({
           serializableCheck: false,
-          thunk: { extraArgument: context }
+          thunk: { extraArgument: context },
         }).concat(middlewares),
-      enhancers: (getDefaultEnhancers) => getDefaultEnhancers().concat(enhancers)
+      enhancers: (getDefaultEnhancers) => getDefaultEnhancers().concat(enhancers),
     });
 
     return store;

@@ -7,7 +7,7 @@ export function setupRefetchListeners(
   storeDispatch: Dispatch,
   options: { refetchOnReconnect?: boolean; refetchOnFocus?: boolean } = {
     refetchOnReconnect: true,
-    refetchOnFocus: true
+    refetchOnFocus: true,
   },
 ): () => void {
   return setupListeners(storeDispatch, (dispatch, actions) => {

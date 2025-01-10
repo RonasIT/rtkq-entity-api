@@ -47,7 +47,7 @@ export const createAxiosBaseQuery = ({ getHttpClient, prepareHeaders }: AxiosBas
 
       return {
         data: response.data,
-        meta: response
+        meta: response,
       };
     } catch (error) {
       if (!(error as AxiosError)?.isAxiosError) {
@@ -60,9 +60,9 @@ export const createAxiosBaseQuery = ({ getHttpClient, prepareHeaders }: AxiosBas
         error: {
           code: String(axiosError.response?.status),
           message: axiosError.response?.data?.message || axiosError.response?.data?.error,
-          data: axiosError.response?.data
+          data: axiosError.response?.data,
         },
-        meta: axiosError.response
+        meta: axiosError.response,
       };
     }
   };

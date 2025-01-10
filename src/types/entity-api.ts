@@ -11,7 +11,7 @@ export type EntityEndpointsDefinitions<
   TEntity extends BaseEntity,
   TSearchRequest extends object = PaginationRequest,
   TEntityRequest extends object = EntityRequest,
-  TSearchResponse extends PaginationResponse<TEntity> = PaginationResponse<TEntity>
+  TSearchResponse extends PaginationResponse<TEntity> = PaginationResponse<TEntity>,
 > = {
   create: MutationDefinition<Partial<TEntity>, BaseQueryFunction, string, TEntity>;
   search: QueryDefinition<TSearchRequest, BaseQueryFunction, string, TSearchResponse>;
@@ -54,7 +54,7 @@ export type EntityApi<
   > = Omit<
     EntityEndpointsDefinitions<TEntity, TSearchRequest, TEntityRequest, TSearchResponse>,
     TOmitEndpoints extends Readonly<Array<EntityEndpointName>> ? TOmitEndpoints[number] : never
-  >
+  >,
 > = Omit<
   Api<
     BaseQueryFunction,
