@@ -12,7 +12,7 @@ import {
   createEntityApiUtils,
   createEntityInstance,
   getEntityTags,
-  prepareRequestParams
+  prepareRequestParams,
 } from './utils';
 
 /**
@@ -106,7 +106,7 @@ export function createEntityApi<
     entityGetRequestConstructor = EntityRequest,
     entitySearchResponseConstructor = PaginationResponse,
     getEntityId = (item) => item.id,
-    getCurrentPage = (pagination) => pagination.currentPage
+    getCurrentPage = (pagination) => pagination.currentPage,
   } = options;
 
   if (!baseQuery && !baseApiCreator) {
@@ -140,17 +140,17 @@ export function createEntityApi<
 
               formattedParams = {
                 ...instanceToPlain(request),
-                ...files
+                ...files,
               };
             }
 
             return {
               method: 'post',
               url: baseEndpoint,
-              data: formattedParams
+              data: formattedParams,
             };
           },
-          transformResponse: (response: object) => createEntityInstance<TEntity>(entityConstructor, response)
+          transformResponse: (response: object) => createEntityInstance<TEntity>(entityConstructor, response),
         }),
 
         /**
@@ -165,7 +165,7 @@ export function createEntityApi<
             return {
               method: 'get',
               url: baseEndpoint,
-              params: prepareRequestParams(params, entitySearchRequestConstructor)
+              params: prepareRequestParams(params, entitySearchRequestConstructor),
             };
           },
           serializeQueryArgs: ({ queryArgs }) => prepareRequestParams(queryArgs, entitySearchRequestConstructor),
@@ -174,10 +174,10 @@ export function createEntityApi<
 
             return {
               pagination,
-              data: data.map((item) => createEntityInstance<TEntity>(entityConstructor, item))
+              data: data.map((item) => createEntityInstance<TEntity>(entityConstructor, item)),
             } as TSearchResponse;
           },
-          providesTags: (response) => getEntityTags(entityName, response, getEntityId)
+          providesTags: (response) => getEntityTags(entityName, response, getEntityId),
         }),
 
         /**
@@ -196,7 +196,7 @@ export function createEntityApi<
             return {
               method: 'get',
               url: baseEndpoint,
-              params: prepareRequestParams(params, entitySearchRequestConstructor)
+              params: prepareRequestParams(params, entitySearchRequestConstructor),
             };
           },
           serializeQueryArgs: ({ queryArgs }) => {
@@ -209,7 +209,7 @@ export function createEntityApi<
             return {
               minPage: pagination.currentPage,
               data: data.map((item) => createEntityInstance<TEntity>(entityConstructor, item)),
-              pagination: { ...pagination, currentPage: getCurrentPage(pagination, request) }
+              pagination: { ...pagination, currentPage: getCurrentPage(pagination, request) },
             } as TSearchResponse & { minPage?: number };
           },
           providesTags: (response) => getEntityTags(entityName, response, getEntityId),
@@ -232,7 +232,7 @@ export function createEntityApi<
                 cache.pagination = response.pagination;
               }
             }
-          }
+          },
         }),
 
         /**
@@ -249,7 +249,7 @@ export function createEntityApi<
             return {
               method: 'get',
               url: `${baseEndpoint}/${id}`,
-              params: prepareRequestParams(params, entityGetRequestConstructor)
+              params: prepareRequestParams(params, entityGetRequestConstructor),
             };
           },
           serializeQueryArgs: ({ queryArgs: { id, params } }) => {
@@ -258,7 +258,7 @@ export function createEntityApi<
             return { id, params: request };
           },
           transformResponse: (response: object) => createEntityInstance<TEntity>(entityConstructor, response),
-          providesTags: (response) => getEntityTags(entityName, response, getEntityId)
+          providesTags: (response) => getEntityTags(entityName, response, getEntityId),
         }),
 
         /**
@@ -275,14 +275,14 @@ export function createEntityApi<
         update: builder.mutation<EntityPartial<TEntity>, EntityPartial<TEntity>>({
           query: (params) => {
             const updatedEntity = createEntityInstance(entityConstructor, params, {
-              fromInstancePartial: true
+              fromInstancePartial: true,
             }) as TEntity;
             const request = instanceToPlain(updatedEntity);
 
             return {
               method: 'put',
               url: `${baseEndpoint}/${request.id}`,
-              data: request
+              data: request,
             };
           },
           async onQueryStarted(arg, api) {
@@ -290,7 +290,7 @@ export function createEntityApi<
           },
           transformResponse: (response: object | undefined, _error, arg) => response
               ? createEntityInstance<TEntity>(entityConstructor, response)
-              : (createEntityInstance(entityConstructor, arg, { fromInstancePartial: true }) as TEntity)
+              : (createEntityInstance(entityConstructor, arg, { fromInstancePartial: true }) as TEntity),
         }),
 
         /**
@@ -303,23 +303,23 @@ export function createEntityApi<
         delete: builder.mutation<void, number>({
           query: (id) => ({
             method: 'delete',
-            url: `${baseEndpoint}/${id}`
+            url: `${baseEndpoint}/${id}`,
           }),
           async onQueryStarted(arg, api) {
             await entityApiUtils.handleEntityDelete(arg, api, { optimistic: false });
-          }
-        })
+          },
+        }),
       };
 
       return omit(endpoints, omitEndpoints || []);
-    }
+    },
   }) as unknown as EntityApi<TEntity, TSearchRequest, TEntityRequest, TSearchResponse>;
 
   // Extend api util
   const entityApiUtils = createEntityApiUtils({
     api,
     entityGetRequestConstructor,
-    entitySearchRequestConstructor
+    entitySearchRequestConstructor,
   });
   Object.assign(api.util, entityApiUtils);
 

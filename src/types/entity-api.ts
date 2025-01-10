@@ -1,12 +1,6 @@
-import { coreModuleName } from '@reduxjs/toolkit/dist/query/core/module.d';
-import {
-  EndpointBuilder,
-  EndpointDefinitions,
-  UpdateDefinitions
-} from '@reduxjs/toolkit/dist/query/endpointDefinitions.d';
-import { reactHooksModuleName } from '@reduxjs/toolkit/dist/query/react/module.d';
-import { NoInfer } from '@reduxjs/toolkit/dist/tsHelpers.d';
-import { Api, MutationDefinition, QueryDefinition } from '@reduxjs/toolkit/query/react';
+import { Api, ApiModules, MutationDefinition, QueryDefinition } from '@reduxjs/toolkit/query/react';
+import { EndpointBuilder, EndpointDefinitions, UpdateDefinitions } from '@reduxjs/toolkit/src/query';
+import { NoInfer } from '@reduxjs/toolkit/src/query/tsHelpers';
 import { BaseEntity, EntityRequest, PaginationRequest, PaginationResponse } from '../models';
 import { BaseQueryFunction } from '../utils';
 import { EntityApiCustomHooks } from './custom-hooks';
@@ -62,7 +56,13 @@ export type EntityApi<
     TOmitEndpoints extends Readonly<Array<EntityEndpointName>> ? TOmitEndpoints[number] : never
   >,
 > = Omit<
-  Api<BaseQueryFunction, TEndpointDefinitions, string, string, typeof coreModuleName | typeof reactHooksModuleName>,
+  Api<
+    BaseQueryFunction,
+    TEndpointDefinitions,
+    string,
+    string,
+    keyof ApiModules<BaseQueryFunction, TEndpointDefinitions, string, string>
+  >,
   'injectEndpoints' | 'enhanceEndpoints'
 > & {
   injectEndpoints<TNewDefinitions extends EndpointDefinitions>(_: {

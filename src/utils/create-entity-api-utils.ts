@@ -1,4 +1,4 @@
-import { PatchCollection } from '@reduxjs/toolkit/dist/query/core/buildThunks.d';
+import { PatchCollection } from '@reduxjs/toolkit/src/query/core/buildThunks';
 import { ClassConstructor } from 'class-transformer';
 import { EntityTagID } from '../enums';
 import { BaseEntity, EntityRequest, PaginationRequest, PaginationResponse } from '../models';
@@ -7,7 +7,7 @@ import {
   EntityApiUtils,
   EntityMutationEndpointName,
   EntityPartial,
-  EntityQueryEndpointName
+  EntityQueryEndpointName,
 } from '../types';
 import { createEntityInstance } from './create-entity-instance';
 import { mergeEntity } from './merge-entity';
@@ -38,7 +38,7 @@ export const createEntityApiUtils = <
         entityGetRequestConstructor as ClassConstructor<TEntityRequest>,
         params,
         {
-          convertFromInstance: entitySearchRequestConstructor as ClassConstructor<TSearchRequest>
+          convertFromInstance: entitySearchRequestConstructor as ClassConstructor<TSearchRequest>,
         },
       );
 
@@ -56,7 +56,7 @@ export const createEntityApiUtils = <
         { type: entityName, id: entityData.id },
         // TODO: Remove selecting all lists once issue is fixed: https://github.com/reduxjs/redux-toolkit/issues/3583
         { type: entityName, id: EntityTagID.LIST },
-        ...(tags || [])
+        ...(tags || []),
       ]);
 
       for (const { endpointName, originalArgs } of cachedQueries) {
@@ -100,7 +100,7 @@ export const createEntityApiUtils = <
         { type: entityName, id },
         // TODO: Remove selecting all lists once issue is fixed: https://github.com/reduxjs/redux-toolkit/issues/3583
         { type: entityName, id: EntityTagID.LIST },
-        ...(tags || [])
+        ...(tags || []),
       ]);
 
       for (const { endpointName, originalArgs } of cachedQueries) {
@@ -191,7 +191,7 @@ export const createEntityApiUtils = <
 
         await entityApiUtils.clearEntityQueries(id, { dispatch, getState }, { tags });
       }
-    }
+    },
   };
 
   return entityApiUtils;

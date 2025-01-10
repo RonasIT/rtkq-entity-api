@@ -10,5 +10,5 @@ export const storeActions = {
    * @see https://redux-toolkit.js.org/api/createAction#usage
    * @type {import('@reduxjs/toolkit').PayloadActionCreator<void, string, never, string>}
    */
-  init: createAction('appState/init')
+  init: createAction('appState/init'),
 };

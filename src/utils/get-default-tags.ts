@@ -21,7 +21,7 @@ export function getEntityTags<TEntity extends BaseEntity>(
   if ('data' in response) {
     return [
       { type: entityName, id: EntityTagID.LIST },
-      ...response.data.map((item) => ({ type: entityName, id: getEntityId(item) }))
+      ...response.data.map((item) => ({ type: entityName, id: getEntityId(item) })),
     ];
   } else {
     return [{ type: entityName, id: response.id }];

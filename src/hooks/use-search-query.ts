@@ -1,4 +1,5 @@
-import { RefetchConfigOptions, SubscriptionOptions } from '@reduxjs/toolkit/dist/query/core/apiState.d';
+import { SubscriptionOptions } from '@reduxjs/toolkit/query';
+import { RefetchConfigOptions } from '@reduxjs/toolkit/src/query/core/apiState';
 import { isEqual } from 'lodash';
 import { useEffect, useState } from 'react';
 import { BaseEntity, PaginationRequest, PaginationResponse } from '../models';
@@ -49,7 +50,7 @@ export const useSearchQuery = <
     isRefetching,
     refetch: handleRefetch,
     searchRequest,
-    setSearchRequest
+    setSearchRequest,
   };
 
   return result;

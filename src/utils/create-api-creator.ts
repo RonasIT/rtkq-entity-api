@@ -2,7 +2,6 @@ import { BaseQueryFn, createApi, CreateApiOptions, EndpointDefinitions } from '@
 import { SetOptional } from 'type-fest';
 import { BaseQueryFunction } from './create-axios-base-query';
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 /**
  * Creates a function that creates RTK Query API with common options.
  *
@@ -35,14 +34,16 @@ export const createApiCreator = <
     TagTypes extends string = never,
   >(
     createApiOptions: SetOptional<CreateApiOptions<BaseQuery, Definitions, ReducerPath, TagTypes>, 'baseQuery'>,
-  ) => {
+  ): typeof api => {
     if (!commonCreateApiOptions.baseQuery && !createApiOptions.baseQuery) {
       throw new Error('Passing baseQuery is required in createApiCreator. Either pass it in commonOptions or in args');
     }
 
-    return createApi({
+    const api = createApi({
       ...commonCreateApiOptions,
-      ...createApiOptions
+      ...createApiOptions,
     } as CreateApiOptions<BaseQuery, Definitions, ReducerPath, TagTypes>);
+
+    return api;
   };
 };

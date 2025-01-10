@@ -1,5 +1,6 @@
 import { ThunkDispatch, UnknownAction } from '@reduxjs/toolkit';
-import { RefetchConfigOptions, SubscriptionOptions } from '@reduxjs/toolkit/dist/query/core/apiState.d';
+import { SubscriptionOptions } from '@reduxjs/toolkit/query';
+import { RefetchConfigOptions } from '@reduxjs/toolkit/src/query/core/apiState';
 import { range, set } from 'lodash';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -17,7 +18,7 @@ export const createEntityApiHooks = <
   >,
 ): EntityApiCustomHooks<TEntity, TRequest, TPaginationResponse> => {
   const entityApiHooks = {
-    useSearchInfiniteQuery: createInfiniteQueryHook(entityApi)
+    useSearchInfiniteQuery: createInfiniteQueryHook(entityApi),
   };
 
   // NOTE: Preserve original hooks to extend them
@@ -73,7 +74,7 @@ export const createInfiniteQueryHook =
         hasNextPage: checkHasNextPage?.(data) || pagination?.currentPage < pagination?.lastPage,
         data,
         items,
-        pagination
+        pagination,
       };
     }, [data]);
 
@@ -150,7 +151,7 @@ export const createInfiniteQueryHook =
       fetchPreviousPage,
       refetch,
       refetchLastPage,
-      refetchAllPages
+      refetchAllPages,
     };
 
     return result;
