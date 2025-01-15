@@ -1,6 +1,11 @@
-import { Api, ApiModules, MutationDefinition, QueryDefinition } from '@reduxjs/toolkit/query/react';
-import { EndpointBuilder, EndpointDefinitions, UpdateDefinitions } from '@reduxjs/toolkit/src/query';
-import { NoInfer } from '@reduxjs/toolkit/src/query/tsHelpers';
+import {
+  Api,
+  MutationDefinition,
+  QueryDefinition,
+  coreModuleName,
+  reactHooksModuleName,
+} from '@reduxjs/toolkit/query/react';
+import { EndpointBuilder, EndpointDefinitions } from '@reduxjs/toolkit/src/query';
 import { BaseEntity, EntityRequest, PaginationRequest, PaginationResponse } from '../models';
 import { BaseQueryFunction } from '../utils';
 import { EntityApiCustomHooks } from './custom-hooks';
@@ -56,13 +61,7 @@ export type EntityApi<
     TOmitEndpoints extends Readonly<Array<EntityEndpointName>> ? TOmitEndpoints[number] : never
   >,
 > = Omit<
-  Api<
-    BaseQueryFunction,
-    TEndpointDefinitions,
-    string,
-    string,
-    keyof ApiModules<BaseQueryFunction, TEndpointDefinitions, string, string>
-  >,
+  Api<BaseQueryFunction, TEndpointDefinitions, string, string, typeof coreModuleName | typeof reactHooksModuleName>,
   'injectEndpoints' | 'enhanceEndpoints'
 > & {
   injectEndpoints<TNewDefinitions extends EndpointDefinitions>(_: {
@@ -81,17 +80,16 @@ export type EntityApi<
   > &
     EntityApiCustomHooks<TEntity, TSearchRequest, TSearchResponse>;
 
-  enhanceEndpoints<TNewTagTypes extends string = never, TNewDefinitions extends EndpointDefinitions = never>(_: {
+  enhanceEndpoints<
+    TNewTagTypes extends string = never,
+    TNewDefinitions extends Partial<TEndpointDefinitions> = never,
+  >(_: {
     addTagTypes?: Array<TNewTagTypes>;
-    endpoints?: UpdateDefinitions<
-      TEndpointDefinitions,
-      string | NoInfer<TNewTagTypes>,
-      TNewDefinitions
-    > extends infer NewDefinitions
-      ? {
-          [K in keyof NewDefinitions]?: Partial<NewDefinitions[K]> | ((definition: NewDefinitions[K]) => void);
-        }
-      : never;
+    endpoints?: {
+      [K in keyof TEndpointDefinitions]?:
+        | Partial<TEndpointDefinitions[K]>
+        | ((definition: TEndpointDefinitions[K]) => void);
+    };
   }): Omit<
     EntityApi<
       TEntity,
