@@ -1,7 +1,7 @@
 import { Dispatch } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
-import { AppState, Platform } from 'react-native';
 import type { addEventListener, fetch, NetInfoState } from '@react-native-community/netinfo';
+import type { AppState as RNAppState, Platform as RNPlatform } from 'react-native';
 
 export function setupRefetchListeners(
   storeDispatch: Dispatch,
@@ -11,11 +11,7 @@ export function setupRefetchListeners(
   },
 ): () => void {
   return setupListeners(storeDispatch, (dispatch, actions) => {
-    if (!Platform?.OS || Platform.OS === 'web') {
-      throw new Error(
-        'The \'setupRefetchListeners\' utility is intended for use with React Native. For web please use \'setupListeners\' from  @reduxjs/toolkit/query.',
-      );
-    }
+    let ReactNative: { AppState: RNAppState; Platform: RNPlatform };
 
     let NetInfo: {
       addEventListener: typeof addEventListener;
@@ -24,9 +20,18 @@ export function setupRefetchListeners(
 
     try {
       NetInfo = require('@react-native-community/netinfo');
+      ReactNative = require('react-native');
     } catch (error) {
       throw new Error(
-        'To use \'refetchOnReconnect\' and \'refetchOnFocus\' you must setup @react-native-community/netinfo package.',
+        'To use \'refetchOnReconnect\' and \'refetchOnFocus\' you must setup @react-native-community/netinfo and react-native package.',
+      );
+    }
+
+    const { AppState, Platform } = ReactNative;
+
+    if (!Platform?.OS || Platform.OS === 'web') {
+      throw new Error(
+        'The \'setupRefetchListeners\' utility is intended for use with React Native. For non React Native apps please use \'setupListeners\' from  @reduxjs/toolkit/query.',
       );
     }
 
