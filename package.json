@@ -38,7 +38,6 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.5.0",
     "axios": "^1.7.9",
-    "axios-observable": "^2.1.0",
     "class-transformer": "^0.5.1",
     "core-js": "^3.40.0",
     "immer": "^10.1.1",

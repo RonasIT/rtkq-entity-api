@@ -2,10 +2,10 @@ import { SerializedError } from '@reduxjs/toolkit';
 import { BaseQueryApi, BaseQueryFn } from '@reduxjs/toolkit/dist/query/index.d';
 import { MaybePromise } from '@reduxjs/toolkit/src/query/tsHelpers';
 import { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, RawAxiosRequestHeaders } from 'axios';
-// TODO: Drop support for axios-observable in next major version
-import { Axios as AxiosObservable } from 'axios-observable';
 import { merge } from 'lodash';
-import { lastValueFrom } from 'rxjs';
+// TODO: Drop support for axios-observable in next major version
+import type { Axios as AxiosObservableInstance } from 'axios-observable';
+import type { lastValueFrom as lastValueFromType } from 'rxjs';
 
 export type BaseQueryFunction = BaseQueryFn<
   AxiosRequestConfig,
@@ -16,7 +16,7 @@ export type BaseQueryFunction = BaseQueryFn<
 >;
 
 export type AxiosBaseQueryArgs = {
-  getHttpClient: (api: BaseQueryApi & { extra?: any }) => AxiosObservable | AxiosInstance;
+  getHttpClient: (api: BaseQueryApi & { extra?: any }) => AxiosObservableInstance | AxiosInstance;
   prepareHeaders?: (api: BaseQueryApi & { extra?: any }) => MaybePromise<RawAxiosRequestHeaders>;
 };
 
@@ -32,7 +32,9 @@ export const createAxiosBaseQuery = ({ getHttpClient, prepareHeaders }: AxiosBas
     const httpClient = getHttpClient(api as BaseQueryApi & { extra?: any });
 
     try {
+      const AxiosObservable = require('axios-observable').Axios as typeof AxiosObservableInstance;
       const usesAxiosObservable = httpClient instanceof AxiosObservable;
+      const lastValueFrom = require('rxjs').lastValueFrom as typeof lastValueFromType;
 
       if (!isDeprecationWarningShown && usesAxiosObservable) {
         isDeprecationWarningShown = true;
