@@ -214,10 +214,7 @@ export function createEntityApi<
           },
           providesTags: (response) => getEntityTags(entityName, response, getEntityId),
           merge: (cache, response) => {
-            if (
-              response.pagination.currentPage === 1 &&
-              cache.pagination.currentPage === response.pagination.currentPage
-            ) {
+            if (response.pagination.currentPage === 1) {
               cache.data = response.data;
               cache.pagination = response.pagination;
             } else {
