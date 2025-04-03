@@ -152,6 +152,7 @@ export const createInfiniteQueryHook =
       refetch,
       refetchLastPage,
       refetchAllPages,
+      fetchPage,
     };
 
     return result;
