@@ -21,6 +21,7 @@ export type AxiosBaseQueryArgs = {
 };
 
 export const createAxiosBaseQuery = ({ getHttpClient, prepareHeaders }: AxiosBaseQueryArgs): BaseQueryFunction => {
+  const isDevEnvironment = typeof process !== 'undefined' && process.env.NODE_ENV === 'development'
   let isDeprecationWarningShown = false;
 
   return async (requestConfig, api: BaseQueryApi) => {
@@ -36,7 +37,7 @@ export const createAxiosBaseQuery = ({ getHttpClient, prepareHeaders }: AxiosBas
       const usesAxiosObservable = httpClient instanceof AxiosObservable;
       const lastValueFrom = require('rxjs').lastValueFrom as typeof lastValueFromType;
 
-      if (!isDeprecationWarningShown && usesAxiosObservable) {
+      if (!isDeprecationWarningShown && usesAxiosObservable && isDevEnvironment) {
         isDeprecationWarningShown = true;
         console.warn(
           'Support of Axios Observable is deprecated and will be removed in the next major version. Please use Axios instead.',
