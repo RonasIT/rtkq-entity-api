@@ -21,7 +21,7 @@ export type AxiosBaseQueryArgs = {
 };
 
 export const createAxiosBaseQuery = ({ getHttpClient, prepareHeaders }: AxiosBaseQueryArgs): BaseQueryFunction => {
-  const isDevEnvironment = typeof process !== 'undefined' && process.env.NODE_ENV === 'development'
+  const isDevEnvironment = __DEV__ || process?.env?.NODE_ENV === 'development'
   let isDeprecationWarningShown = false;
 
   return async (requestConfig, api: BaseQueryApi) => {
