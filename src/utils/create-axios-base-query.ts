@@ -2,10 +2,10 @@ import { SerializedError } from '@reduxjs/toolkit';
 import { BaseQueryApi, BaseQueryFn } from '@reduxjs/toolkit/dist/query/index.d';
 import { MaybePromise } from '@reduxjs/toolkit/src/query/tsHelpers';
 import { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, RawAxiosRequestHeaders } from 'axios';
+import { Axios as AxiosObservableInstance } from 'axios-observable';
 import { merge } from 'lodash';
 // TODO: Drop support for axios-observable in next major version
-import type { Axios as AxiosObservableInstance } from 'axios-observable';
-import type { lastValueFrom as lastValueFromType } from 'rxjs';
+import { lastValueFrom } from 'rxjs';
 
 export type BaseQueryFunction = BaseQueryFn<
   AxiosRequestConfig,
@@ -21,7 +21,9 @@ export type AxiosBaseQueryArgs = {
 };
 
 export const createAxiosBaseQuery = ({ getHttpClient, prepareHeaders }: AxiosBaseQueryArgs): BaseQueryFunction => {
-  const isDevEnvironment = __DEV__ || process?.env?.NODE_ENV === 'development'
+  // const isDevEnvironment = __DEV__ || process?.env?.NODE_ENV === 'development'
+  const isDevEnvironment = process?.env?.NODE_ENV === 'development';
+
   let isDeprecationWarningShown = false;
 
   return async (requestConfig, api: BaseQueryApi) => {
@@ -33,9 +35,12 @@ export const createAxiosBaseQuery = ({ getHttpClient, prepareHeaders }: AxiosBas
     const httpClient = getHttpClient(api as BaseQueryApi & { extra?: any });
 
     try {
-      const AxiosObservable = require('axios-observable').Axios as typeof AxiosObservableInstance;
-      const usesAxiosObservable = httpClient instanceof AxiosObservable;
-      const lastValueFrom = require('rxjs').lastValueFrom as typeof lastValueFromType;
+      // const AxiosObservable = require('axios-observable').Axios as typeof AxiosObservableInstance;
+
+      // const usesAxiosObservable = httpClient instanceof AxiosObservable;
+
+      const usesAxiosObservable = httpClient instanceof AxiosObservableInstance;
+      // const lastValueFrom = lastValueFrom as typeof lastValueFromType;
 
       if (!isDeprecationWarningShown && usesAxiosObservable && isDevEnvironment) {
         isDeprecationWarningShown = true;

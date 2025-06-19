@@ -1,4 +1,4 @@
-import { PatchCollection } from '@reduxjs/toolkit/src/query/core/buildThunks';
+import { MaybeDrafted, PatchCollection } from '@reduxjs/toolkit/src/query/core/buildThunks';
 import { ClassConstructor } from 'class-transformer';
 import { EntityTagID } from '../enums';
 import { BaseEntity, EntityRequest, PaginationRequest, PaginationResponse } from '../models';
@@ -66,8 +66,16 @@ export const createEntityApiUtils = <
 
         const action = api.util.updateQueryData(
           endpointName as EntityQueryEndpointName,
-          originalArgs as any,
-          (endpointData) => {
+          originalArgs as never,
+          (data) => {
+            const endpointData = data as MaybeDrafted<
+              | TEntity
+              | TSearchResponse
+              | (TSearchResponse & {
+                  minPage?: number;
+                })
+            >;
+
             if ('data' in endpointData && Array.isArray(endpointData.data)) {
               const existingItemIndex = endpointData.data.findIndex((item) => item.id === entityData.id);
 
@@ -106,8 +114,16 @@ export const createEntityApiUtils = <
       for (const { endpointName, originalArgs } of cachedQueries) {
         const action = api.util.updateQueryData(
           endpointName as EntityQueryEndpointName,
-          originalArgs as any,
-          (endpointData) => {
+          originalArgs as never,
+          (data) => {
+            const endpointData = data as MaybeDrafted<
+              | TEntity
+              | TSearchResponse
+              | (TSearchResponse & {
+                  minPage?: number;
+                })
+            >;
+
             if ('data' in endpointData && Array.isArray(endpointData.data)) {
               const existingItemIndex = endpointData.data.findIndex((item) => item.id === id);
 

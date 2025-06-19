@@ -37,6 +37,8 @@ import {
  * @param {((pagination: Pagination, request: TSearchRequest) => number) | undefined} [options.getCurrentPage=((pagination) => pagination.currentPage)] - The function to get current page.
  * @returns {Omit<EntityApi<TEntity, TSearchRequest, TEntityRequest, TSearchResponse, typeof omitEndpoints>, keyof EntityApiCustomHooks> & EntityApiCustomHooks<TEntity, TSearchRequest, TSearchResponse>} The entity API.
  */
+console.log('!!!createEntityApi 3!!!');
+
 export function createEntityApi<
   TEntity extends BaseEntity,
   TSearchRequest extends PaginationRequest = PaginationRequest,
@@ -229,6 +231,57 @@ export function createEntityApi<
                 cache.pagination = response.pagination;
               }
             }
+          },
+        }),
+
+        searchNew: builder.infiniteQuery<TSearchResponse & { minPage?: number }, TSearchRequest, number>({
+          infiniteQueryOptions: {
+            initialPageParam: 1,
+            getNextPageParam: (
+              lastPage,
+              _allPages,
+              lastPageParam,
+              // allPageParams,
+              // queryArg
+            ) => (lastPage.pagination.lastPage === lastPageParam ? undefined : lastPageParam + 1),
+          },
+          query: ({ queryArg, pageParam }) => {
+            return {
+              method: 'get',
+              url: baseEndpoint,
+              params: prepareRequestParams({ ...queryArg, page: pageParam }, entitySearchRequestConstructor),
+            };
+          },
+          transformResponse: (response, _, { queryArg }) => {
+            const { data, pagination } = plainToInstance(entitySearchResponseConstructor, response);
+
+            return {
+              minPage: pagination.currentPage,
+              data: data.map((item) => createEntityInstance<TEntity>(entityConstructor, item)),
+              pagination: { ...pagination, currentPage: getCurrentPage(pagination, queryArg) },
+            } as TSearchResponse & { minPage?: number };
+          },
+          providesTags: (data) => {
+            console.log(
+              'providesTags',
+              data
+                ? [
+                    { type: entityName, id: EntityTagID.LIST },
+                    ...data.pages
+                      .map((response) => response.data.map((item) => ({ type: entityName, id: getEntityId(item) })))
+                      .flat(),
+                  ]
+                : [],
+            );
+
+            return data
+              ? [
+                  { type: entityName, id: EntityTagID.LIST },
+                  ...data.pages
+                    .map((response) => response.data.map((item) => ({ type: entityName, id: getEntityId(item) })))
+                    .flat(),
+                ]
+              : [];
           },
         }),
 
