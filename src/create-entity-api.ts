@@ -37,7 +37,6 @@ import {
  * @param {((pagination: Pagination, request: TSearchRequest) => number) | undefined} [options.getCurrentPage=((pagination) => pagination.currentPage)] - The function to get current page.
  * @returns {Omit<EntityApi<TEntity, TSearchRequest, TEntityRequest, TSearchResponse, typeof omitEndpoints>, keyof EntityApiCustomHooks> & EntityApiCustomHooks<TEntity, TSearchRequest, TSearchResponse>} The entity API.
  */
-console.log('!!!createEntityApi 3!!!');
 
 export function createEntityApi<
   TEntity extends BaseEntity,
@@ -262,18 +261,6 @@ export function createEntityApi<
             } as TSearchResponse & { minPage?: number };
           },
           providesTags: (data) => {
-            console.log(
-              'providesTags',
-              data
-                ? [
-                    { type: entityName, id: EntityTagID.LIST },
-                    ...data.pages
-                      .map((response) => response.data.map((item) => ({ type: entityName, id: getEntityId(item) })))
-                      .flat(),
-                  ]
-                : [],
-            );
-
             return data
               ? [
                   { type: entityName, id: EntityTagID.LIST },
