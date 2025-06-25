@@ -236,13 +236,14 @@ export function createEntityApi<
         searchNew: builder.infiniteQuery<TSearchResponse & { minPage?: number }, TSearchRequest, number>({
           infiniteQueryOptions: {
             initialPageParam: 1,
+
             getNextPageParam: (
               lastPage,
               _allPages,
               lastPageParam,
               // allPageParams,
               // queryArg
-            ) => (lastPage.pagination.lastPage === lastPageParam ? undefined : lastPageParam + 1),
+            ) => (lastPage?.pagination.lastPage === lastPageParam ? undefined : lastPageParam + 1),
           },
           query: ({ queryArg, pageParam }) => {
             return {
