@@ -10,14 +10,6 @@ Wrapper utilities for CRUD operations in REST APIs entities using [RTK Query](ht
 npm i @ronas-it/rtkq-entity-api
 ```
 
-If your app uses `axios-observable`, install it along with `rxjs`:
-
-```sh
-npm i axios-observable rxjs
-```
-
-Note that support of `axios-observable` will be removed in upcoming major release.
-
 2. Create base query with your API configuration, for example [using Axios](https://redux-toolkit.js.org/rtk-query/usage/customizing-queries#axios-basequery):
 
 ```ts

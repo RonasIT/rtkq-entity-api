@@ -9,25 +9,18 @@ export function setupRefetchListeners(
     refetchOnReconnect: true,
     refetchOnFocus: true,
   },
+  netInfoRef: {
+    state: NetInfoState;
+    fetch: typeof fetch;
+    addEventListener: typeof addEventListener;
+  },
+  reactNativeRef: {
+    AppState: RNAppState;
+    Platform: RNPlatform;
+  },
 ): () => void {
   return setupListeners(storeDispatch, (dispatch, actions) => {
-    let ReactNative: { AppState: RNAppState; Platform: RNPlatform };
-
-    let NetInfo: {
-      addEventListener: typeof addEventListener;
-      fetch: typeof fetch;
-    };
-
-    try {
-      NetInfo = require('@react-native-community/netinfo');
-      ReactNative = require('react-native');
-    } catch (error) {
-      throw new Error(
-        'To use \'refetchOnReconnect\' and \'refetchOnFocus\' you must setup @react-native-community/netinfo and react-native package.',
-      );
-    }
-
-    const { AppState, Platform } = ReactNative;
+    const { AppState, Platform } = reactNativeRef;
 
     if (!Platform?.OS || Platform.OS === 'web') {
       throw new Error(
@@ -39,7 +32,7 @@ export function setupRefetchListeners(
 
     if (options.refetchOnFocus) {
       const { remove: appStateUnsubscribe } = AppState.addEventListener('change', async (state) => {
-        const { isConnected, isInternetReachable } = await NetInfo.fetch();
+        const { isConnected, isInternetReachable } = await netInfoRef.fetch();
         const hasConnection = isConnected && isInternetReachable;
 
         if (hasConnection) {
@@ -51,7 +44,7 @@ export function setupRefetchListeners(
     }
 
     if (options.refetchOnReconnect) {
-      const netInfoUnsubscribe = NetInfo.addEventListener(({ isConnected, isInternetReachable }: NetInfoState) => {
+      const netInfoUnsubscribe = netInfoRef.addEventListener(({ isConnected, isInternetReachable }: NetInfoState) => {
         const hasConnection = !!(isConnected && isInternetReachable);
 
         dispatch(hasConnection ? actions.onOnline() : actions.onOffline());
