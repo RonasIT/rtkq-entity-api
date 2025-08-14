@@ -10,7 +10,6 @@ export function setupRefetchListeners(
     refetchOnFocus: true,
   },
   netInfoRef: {
-    state: NetInfoState;
     fetch: typeof fetch;
     addEventListener: typeof addEventListener;
   },
