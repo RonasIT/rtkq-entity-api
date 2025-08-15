@@ -290,14 +290,21 @@ npm i @react-native-community/netinfo
 Example
 
 ```tsx
+import { addEventListener, fetch } from '@react-native-community/netinfo';
 import { setupRefetchListeners } from '@ronas-it/rtkq-entity-api';
+import ReactNative from 'react-native';
 import { useDispatch } from 'react-redux';
 
 function App(): ReactElement {
    const dispatch = useDispatch();
 
    useEffect(() => {
-      const unsubscribeRefetchListeners = setupRefetchListeners(dispatch);
+      const unsubscribeRefetchListeners = setupRefetchListeners(
+        dispatch,
+        { refetchOnFocus: true, refetchOnReconnect: true },
+        { addEventListener, fetch },
+        ReactNative,
+      );
 
       return unsubscribeRefetchListeners;
    }, []);
