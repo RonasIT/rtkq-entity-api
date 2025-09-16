@@ -36,7 +36,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@reduxjs/toolkit": "^2.5.0",
+    "@reduxjs/toolkit": "^2.6.0",
     "axios": "^1.7.9",
     "class-transformer": "^0.5.1",
     "core-js": "^3.40.0",
