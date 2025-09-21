@@ -1,3 +1,4 @@
+import { InfiniteData } from '@reduxjs/toolkit/query';
 import { MaybeDrafted, PatchCollection } from '@reduxjs/toolkit/src/query/core/buildThunks';
 import { ClassConstructor } from 'class-transformer';
 import { EntityTagID } from '../enums';
@@ -74,6 +75,12 @@ export const createEntityApiUtils = <
               | (TSearchResponse & {
                   minPage?: number;
                 })
+              | InfiniteData<
+                  TSearchResponse & {
+                    minPage?: number;
+                  },
+                  number
+                >
             >;
 
             if ('data' in endpointData && Array.isArray(endpointData.data)) {
@@ -85,6 +92,13 @@ export const createEntityApiUtils = <
                   existingEntity,
                 );
               }
+            } else if ('pages' in endpointData && Array.isArray(endpointData.pages)) {
+              // const existingPageIndex = endpointData.pages.findIndex((page) => page.pagination.currentPage === id);
+              // if (existingPageIndex > -1) {
+              //   endpointData.pages[existingPageIndex] = mergeEntity(
+              //     endpointData.pages[existingPageIndex],
+              //     existingEntity);
+              // }
             } else {
               mergeEntity(endpointData as TEntity, existingEntity);
             }
@@ -122,6 +136,12 @@ export const createEntityApiUtils = <
               | (TSearchResponse & {
                   minPage?: number;
                 })
+              | InfiniteData<
+                  TSearchResponse & {
+                    minPage?: number;
+                  },
+                  number
+                >
             >;
 
             if ('data' in endpointData && Array.isArray(endpointData.data)) {
@@ -131,6 +151,12 @@ export const createEntityApiUtils = <
                 endpointData.data.splice(existingItemIndex, 1);
                 endpointData.pagination.total--;
               }
+            } else if ('pages' in endpointData && Array.isArray(endpointData.pages)) {
+              // const existingPageIndex = endpointData.pages.findIndex((page) => page.pagination.currentPage === id);
+              // if (existingPageIndex > -1) {
+              //   endpointData.pages.splice(existingPageIndex, 1);
+              //   endpointData.pageParams.splice(existingPageIndex, 1);
+              // }
             }
           },
         );
