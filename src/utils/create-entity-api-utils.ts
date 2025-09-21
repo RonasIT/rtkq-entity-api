@@ -93,12 +93,27 @@ export const createEntityApiUtils = <
                 );
               }
             } else if ('pages' in endpointData && Array.isArray(endpointData.pages)) {
-              // const existingPageIndex = endpointData.pages.findIndex((page) => page.pagination.currentPage === id);
-              // if (existingPageIndex > -1) {
-              //   endpointData.pages[existingPageIndex] = mergeEntity(
-              //     endpointData.pages[existingPageIndex],
-              //     existingEntity);
-              // }
+              // TODO: Test it
+
+              let existingItemIndex = -1;
+              const existingPageIndex = endpointData.pages.findIndex((page) => {
+                const itemIndex = page.data.findIndex((item) => item.id === entityData.id);
+
+                if (itemIndex !== -1) {
+                  existingItemIndex = itemIndex;
+
+                  return true;
+                }
+
+                return false;
+              });
+
+              if (existingPageIndex > -1 && existingItemIndex > -1) {
+                endpointData.pages[existingPageIndex].data[existingItemIndex] = mergeEntity(
+                  endpointData.pages[existingPageIndex].data[existingItemIndex],
+                  existingEntity,
+                );
+              }
             } else {
               mergeEntity(endpointData as TEntity, existingEntity);
             }
@@ -157,6 +172,30 @@ export const createEntityApiUtils = <
               //   endpointData.pages.splice(existingPageIndex, 1);
               //   endpointData.pageParams.splice(existingPageIndex, 1);
               // }
+
+              // TODO: Test it
+
+              let existingItemIndex = -1;
+              const existingPageIndex = endpointData.pages.findIndex((page) => {
+                const itemIndex = page.data.findIndex((item) => item.id === id);
+
+                if (itemIndex !== -1) {
+                  existingItemIndex = itemIndex;
+
+                  return true;
+                }
+
+                return false;
+              });
+
+              if (existingPageIndex > -1 && existingItemIndex > -1) {
+                endpointData.pages[existingPageIndex].data.splice(existingItemIndex, 1);
+
+                // TODO: Test it
+                for (let i = 0; i < endpointData.pages.length; i++) {
+                  endpointData.pages[i].pagination.total--;
+                }
+              }
             }
           },
         );
