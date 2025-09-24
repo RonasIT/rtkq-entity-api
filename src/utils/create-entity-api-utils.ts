@@ -93,8 +93,6 @@ export const createEntityApiUtils = <
                 );
               }
             } else if ('pages' in endpointData && Array.isArray(endpointData.pages)) {
-              // TODO: Test it
-
               let existingItemIndex = -1;
               const existingPageIndex = endpointData.pages.findIndex((page) => {
                 const itemIndex = page.data.findIndex((item) => item.id === entityData.id);
@@ -167,14 +165,6 @@ export const createEntityApiUtils = <
                 endpointData.pagination.total--;
               }
             } else if ('pages' in endpointData && Array.isArray(endpointData.pages)) {
-              // const existingPageIndex = endpointData.pages.findIndex((page) => page.pagination.currentPage === id);
-              // if (existingPageIndex > -1) {
-              //   endpointData.pages.splice(existingPageIndex, 1);
-              //   endpointData.pageParams.splice(existingPageIndex, 1);
-              // }
-
-              // TODO: Test it
-
               let existingItemIndex = -1;
               const existingPageIndex = endpointData.pages.findIndex((page) => {
                 const itemIndex = page.data.findIndex((item) => item.id === id);
@@ -190,8 +180,8 @@ export const createEntityApiUtils = <
 
               if (existingPageIndex > -1 && existingItemIndex > -1) {
                 endpointData.pages[existingPageIndex].data.splice(existingItemIndex, 1);
+                endpointData.pages.filter((pages) => !!pages.data.length);
 
-                // TODO: Test it
                 for (let i = 0; i < endpointData.pages.length; i++) {
                   endpointData.pages[i].pagination.total--;
                 }

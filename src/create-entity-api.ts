@@ -243,7 +243,12 @@ export function createEntityApi<
               lastPageParam,
               // allPageParams,
               // queryArg
-            ) => (lastPage?.pagination.lastPage === lastPageParam ? undefined : lastPageParam + 1),
+            ) => {
+              console.log('lastPageParam', lastPageParam);
+              console.log('lastPage?.pagination.lastPage', lastPage?.pagination.lastPage);
+
+              return lastPageParam < lastPage?.pagination.lastPage ? lastPageParam + 1 : undefined;
+            },
           },
           query: ({ queryArg, pageParam }) => {
             return {
