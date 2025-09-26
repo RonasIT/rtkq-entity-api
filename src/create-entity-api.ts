@@ -237,18 +237,7 @@ export function createEntityApi<
           infiniteQueryOptions: {
             initialPageParam: 1,
 
-            getNextPageParam: (
-              lastPage,
-              _allPages,
-              lastPageParam,
-              // allPageParams,
-              // queryArg
-            ) => {
-              console.log('lastPageParam', lastPageParam);
-              console.log('lastPage?.pagination.lastPage', lastPage?.pagination.lastPage);
-
-              return lastPageParam < lastPage?.pagination.lastPage ? lastPageParam + 1 : undefined;
-            },
+            getNextPageParam: (lastPage, _allPages, lastPageParam) => lastPageParam < lastPage?.pagination.lastPage ? lastPageParam + 1 : undefined,
           },
           query: ({ queryArg, pageParam }) => {
             return {
