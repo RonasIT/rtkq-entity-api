@@ -22,7 +22,7 @@ export type EntityEndpointsDefinitions<
   create: MutationDefinition<Partial<TEntity>, BaseQueryFunction, string, TEntity>;
   search: QueryDefinition<TSearchRequest, BaseQueryFunction, string, TSearchResponse>;
   searchInfinite: QueryDefinition<TSearchRequest, BaseQueryFunction, string, TSearchResponse & { minPage?: number }>;
-  searchNew: InfiniteQueryDefinition<
+  searchList: InfiniteQueryDefinition<
     TSearchRequest,
     number,
     BaseQueryFunction,

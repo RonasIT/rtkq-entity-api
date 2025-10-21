@@ -233,7 +233,7 @@ export function createEntityApi<
           },
         }),
 
-        searchNew: builder.infiniteQuery<TSearchResponse & { minPage?: number }, TSearchRequest, number>({
+        searchList: builder.infiniteQuery<TSearchResponse & { minPage?: number }, TSearchRequest, number>({
           infiniteQueryOptions: {
             initialPageParam: 1,
 
