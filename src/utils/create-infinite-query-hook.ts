@@ -1,6 +1,5 @@
 import { ThunkDispatch, UnknownAction } from '@reduxjs/toolkit';
 import { SubscriptionOptions } from '@reduxjs/toolkit/query';
-import { RefetchConfigOptions } from '@reduxjs/toolkit/src/query/core/apiState';
 import { range, set } from 'lodash';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -46,7 +45,7 @@ export const createInfiniteQueryHook =
     >,
   ) => (
     searchRequest: TRequest = {} as TRequest,
-    queryOptions: Partial<SubscriptionOptions & RefetchConfigOptions & { skip?: boolean }> = {},
+    queryOptions: Partial<SubscriptionOptions & { refetchOnMountOrArgChange: boolean | number; skip?: boolean }> = {},
     utilities: { checkHasNextPage?: (paginationResponse?: PaginationResponse<TEntity>) => boolean } = {},
   ): typeof result => {
     const dispatch: ThunkDispatch<any, any, UnknownAction> = useDispatch();

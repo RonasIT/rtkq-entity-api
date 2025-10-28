@@ -1,6 +1,5 @@
 import { SerializedError } from '@reduxjs/toolkit';
-import { BaseQueryApi, BaseQueryFn } from '@reduxjs/toolkit/dist/query/index.d';
-import { MaybePromise } from '@reduxjs/toolkit/src/query/tsHelpers';
+import { BaseQueryApi, BaseQueryFn } from '@reduxjs/toolkit/query';
 import { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, RawAxiosRequestHeaders } from 'axios';
 import { merge } from 'lodash';
 
@@ -14,7 +13,9 @@ export type BaseQueryFunction = BaseQueryFn<
 
 export type AxiosBaseQueryArgs = {
   getHttpClient: (api: BaseQueryApi & { extra?: any }) => AxiosInstance;
-  prepareHeaders?: (api: BaseQueryApi & { extra?: any }) => MaybePromise<RawAxiosRequestHeaders>;
+  prepareHeaders?: (
+    api: BaseQueryApi & { extra?: any },
+  ) => RawAxiosRequestHeaders | PromiseLike<RawAxiosRequestHeaders>;
 };
 
 export const createAxiosBaseQuery = ({ getHttpClient, prepareHeaders }: AxiosBaseQueryArgs): BaseQueryFunction => {

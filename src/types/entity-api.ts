@@ -1,11 +1,12 @@
 import {
   Api,
+  EndpointBuilder,
+  EndpointDefinitions,
   MutationDefinition,
   QueryDefinition,
   coreModuleName,
   reactHooksModuleName,
 } from '@reduxjs/toolkit/query/react';
-import { EndpointBuilder, EndpointDefinitions } from '@reduxjs/toolkit/src/query';
 import { BaseEntity, EntityRequest, PaginationRequest, PaginationResponse } from '../models';
 import { BaseQueryFunction } from '../utils';
 import { EntityApiCustomHooks } from './custom-hooks';
