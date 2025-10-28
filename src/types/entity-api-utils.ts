@@ -1,10 +1,7 @@
 import { TagDescription } from '@reduxjs/toolkit/query';
-import { MutationLifecycleApi, QueryLifecycleApi } from '@reduxjs/toolkit/src/query/core';
-import { PatchCollection } from '@reduxjs/toolkit/src/query/core/buildThunks';
-import { BaseEntity, EntityRequest, PaginationRequest, PaginationResponse } from '../models';
-import { BaseQueryFunction } from '../utils/create-axios-base-query';
+import { BaseEntity, EntityRequest, PaginationRequest } from '../models';
 import { EntityPartial } from './entity-partial';
-import { LifecycleApi } from './lifecycle-api';
+import { LifecycleApi, PatchCollection } from './rtk-types';
 
 export type EntityApiUtils<
   TEntity extends BaseEntity,
@@ -26,7 +23,7 @@ export type EntityApiUtils<
    */
   patchEntityQueries: (
     entityData: EntityPartial<TEntity>,
-    endpointLifecycle: Pick<LifecycleApi, 'dispatch' | 'getState'>,
+    endpointLifecycle: Pick<LifecycleApi<TEntity, TEntity>, 'dispatch' | 'getState'>,
     options?: { shouldRefetchEntity?: boolean; tags?: ReadonlyArray<TagDescription<string>> },
   ) => Promise<Array<PatchCollection>>;
   /**
@@ -43,7 +40,7 @@ export type EntityApiUtils<
   fetchEntity: (
     id: TEntity['id'],
     params: TSearchRequest | TEntityRequest,
-    endpointLifecycle: Pick<LifecycleApi, 'dispatch'>,
+    endpointLifecycle: Pick<LifecycleApi<TEntity, TSearchRequest | TEntityRequest>, 'dispatch'>,
   ) => Promise<TEntity>;
   /**
    * Clears entity queries related to the provided ID. Can be useful to perform pessimistic/optimistic deletion.
@@ -58,25 +55,9 @@ export type EntityApiUtils<
    */
   clearEntityQueries: (
     entityId: TEntity['id'],
-    endpointLifecycle: Pick<LifecycleApi, 'dispatch' | 'getState'>,
+    endpointLifecycle: Pick<LifecycleApi<void, EntityPartial<TEntity> | TEntity['id']>, 'dispatch' | 'getState'>,
     options?: { tags?: ReadonlyArray<TagDescription<string>> },
   ) => Promise<Array<PatchCollection>>;
-  /**
-   * @deprecated This utility will be removed. Please use 'util.upsertQueryData' if you need to prefill entity query.
-   */
-  handleEntityCreate: (
-    arg: Partial<TEntity>,
-    endpointLifecycle: MutationLifecycleApi<typeof arg, BaseQueryFunction, TEntity | void, string>,
-  ) => void | Promise<void>;
-  /**
-   * @deprecated This utility will be removed. Please use 'util.upsertQueryEntries' if you need to prefill entity query.
-   */
-  handleEntitySearch: (
-    arg: TSearchRequest,
-    endpointLifecycle: {
-      shouldUpsertEntityQueries?: boolean;
-    } & QueryLifecycleApi<typeof arg, BaseQueryFunction, PaginationResponse<TEntity>, string>,
-  ) => void | Promise<void>;
   /**
    * Handles entity update.
    * Uses patchEntityQueries under hood and intended to be used in `onQueryStarted` callback to perform optimistic/pessimistic update of entity data in queries connected by tags.
@@ -94,7 +75,7 @@ export type EntityApiUtils<
    */
   handleEntityUpdate: (
     arg: EntityPartial<TEntity> | TEntity['id'],
-    endpointLifecycle: MutationLifecycleApi<typeof arg, BaseQueryFunction, EntityPartial<TEntity> | void, string>,
+    endpointLifecycle: LifecycleApi<EntityPartial<TEntity>, EntityPartial<TEntity> | TEntity['id']>,
     options?: {
       optimistic?: boolean;
       shouldRefetchEntity?: boolean;
@@ -117,7 +98,7 @@ export type EntityApiUtils<
    */
   handleEntityDelete: (
     arg: TEntity['id'],
-    endpointLifecycle: MutationLifecycleApi<typeof arg, BaseQueryFunction, void, string>,
+    endpointLifecycle: LifecycleApi<void, TEntity['id']>,
     options?: { optimistic?: boolean; tags?: ReadonlyArray<TagDescription<string>> },
   ) => void | Promise<void>;
 };
