@@ -11,6 +11,7 @@ import {
   EntityQueryEndpointName,
 } from '../types';
 import { createEntityInstance } from './create-entity-instance';
+import { findEntityInPages } from './find-entity-in-pages';
 import { mergeEntity } from './merge-entity';
 
 export const createEntityApiUtils = <
@@ -88,22 +89,11 @@ export const createEntityApiUtils = <
                 );
               }
             } else if ('pages' in endpointData && Array.isArray(endpointData.pages)) {
-              let existingItemIndex = -1;
-              const existingPageIndex = endpointData.pages.findIndex((page) => {
-                const itemIndex = page.data.findIndex((item) => item.id === entityData.id);
+              const { pageIndex, itemIndex } = findEntityInPages(endpointData.pages, entityData.id);
 
-                if (itemIndex !== -1) {
-                  existingItemIndex = itemIndex;
-
-                  return true;
-                }
-
-                return false;
-              });
-
-              if (existingPageIndex > -1 && existingItemIndex > -1) {
-                endpointData.pages[existingPageIndex].data[existingItemIndex] = mergeEntity(
-                  endpointData.pages[existingPageIndex].data[existingItemIndex],
+              if (pageIndex > -1 && itemIndex > -1) {
+                endpointData.pages[pageIndex].data[itemIndex] = mergeEntity(
+                  endpointData.pages[pageIndex].data[itemIndex],
                   existingEntity,
                 );
               }
@@ -155,21 +145,10 @@ export const createEntityApiUtils = <
                 endpointData.pagination.total--;
               }
             } else if ('pages' in endpointData && Array.isArray(endpointData.pages)) {
-              let existingItemIndex = -1;
-              const existingPageIndex = endpointData.pages.findIndex((page) => {
-                const itemIndex = page.data.findIndex((item) => item.id === id);
+              const { pageIndex, itemIndex } = findEntityInPages(endpointData.pages, id);
 
-                if (itemIndex !== -1) {
-                  existingItemIndex = itemIndex;
-
-                  return true;
-                }
-
-                return false;
-              });
-
-              if (existingPageIndex > -1 && existingItemIndex > -1) {
-                endpointData.pages[existingPageIndex].data.splice(existingItemIndex, 1);
+              if (pageIndex > -1 && itemIndex > -1) {
+                endpointData.pages[pageIndex].data.splice(itemIndex, 1);
                 endpointData.pages.filter((pages) => !!pages.data.length);
 
                 for (let i = 0; i < endpointData.pages.length; i++) {
