@@ -75,12 +75,7 @@ export const createEntityApiUtils = <
               | (TSearchResponse & {
                   minPage?: number;
                 })
-              | InfiniteData<
-                  TSearchResponse & {
-                    minPage?: number;
-                  },
-                  number
-                >
+              | InfiniteData<TSearchResponse, number>
             >;
 
             if ('data' in endpointData && Array.isArray(endpointData.data)) {
@@ -149,12 +144,7 @@ export const createEntityApiUtils = <
               | (TSearchResponse & {
                   minPage?: number;
                 })
-              | InfiniteData<
-                  TSearchResponse & {
-                    minPage?: number;
-                  },
-                  number
-                >
+              | InfiniteData<TSearchResponse, number>
             >;
 
             if ('data' in endpointData && Array.isArray(endpointData.data)) {

@@ -180,7 +180,6 @@ export function createEntityApi<
           },
           providesTags: (response) => getEntityTags(entityName, response, getEntityId),
         }),
-
         /**
          * Creates a query endpoint for infinite searching entities. Behaves similar to `search`:
          * - A query endpoint that requests `GET /{baseEndpoint}` for searching entities.
@@ -232,8 +231,18 @@ export function createEntityApi<
             }
           },
         }),
-
-        searchList: builder.infiniteQuery<TSearchResponse & { minPage?: number }, TSearchRequest, number>({
+        /**
+         * Creates a query endpoint for infinite searching entities.
+         * - A query endpoint that requests `GET /{baseEndpoint}` for searching entities.
+         * - Accepts request params described by `entitySearchRequestConstructor` and returns `entitySearchResponseConstructor` extending `PaginationRequest` and `PaginationResponse` respectively.
+         * But accumulates data from newly requested pages.
+         * This query can be used with `useSearchPaginatedInfiniteQuery` hook to implement infinite scrolling lists.
+         * It supports loading data in both directions using `fetchNextPage` and `fetchPreviousPage` callbacks, and provides other useful props.
+         *
+         * @param {TSearchRequest} params - The parameters for searching the entities.
+         * @return {Promise<InfiniteData<TSearchResponse, number>>} A promise that resolves to the search result.
+         */
+        searchPaginated: builder.infiniteQuery<TSearchResponse, TSearchRequest, number>({
           infiniteQueryOptions: {
             initialPageParam: 1,
 

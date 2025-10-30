@@ -8,7 +8,7 @@ import { BaseEntity, PaginationRequest, PaginationResponse } from '../models';
 import { EntityApi, EntityMutationEndpointName } from '../types';
 
 /**
- * @deprecated This hook will be removed. Instead, use 'useSearchInfiniteQuery' hook in your entity API directly
+ * @deprecated This hook will be removed. Instead, use 'useSearchPaginatedInfiniteQuery' hook in your entity API directly
  */
 export const useInfiniteQuery = <
   TEntity extends BaseEntity,
