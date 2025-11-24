@@ -1,5 +1,4 @@
 import { InfiniteData } from '@reduxjs/toolkit/query';
-import { MaybeDrafted, PatchCollection } from '@reduxjs/toolkit/src/query/core/buildThunks';
 import { ClassConstructor } from 'class-transformer';
 import { EntityTagID } from '../enums';
 import { BaseEntity, EntityRequest, PaginationRequest, PaginationResponse } from '../models';
@@ -9,6 +8,8 @@ import {
   EntityMutationEndpointName,
   EntityPartial,
   EntityQueryEndpointName,
+  MaybeDrafted,
+  PatchCollection,
 } from '../types';
 import { createEntityInstance } from './create-entity-instance';
 import { findEntityInPages } from './find-entity-in-pages';
@@ -164,30 +165,6 @@ export const createEntityApiUtils = <
       }
 
       return patchResults;
-    },
-    handleEntityCreate: async (_args, { dispatch, queryFulfilled }) => {
-      const { data: createdEntity } = await queryFulfilled;
-
-      if (createdEntity?.id) {
-        await dispatch(api.util.upsertQueryData('get', { id: createdEntity.id }, createdEntity));
-      }
-    },
-    handleEntitySearch: async (request, { shouldUpsertEntityQueries = false, dispatch, queryFulfilled }) => {
-      if (!shouldUpsertEntityQueries) {
-        return;
-      }
-
-      const { data: response } = await queryFulfilled;
-
-      const entityRequest = createEntityInstance<TEntityRequest>(
-        entityGetRequestConstructor as ClassConstructor<TEntityRequest>,
-        request,
-        { convertFromInstance: entitySearchRequestConstructor as ClassConstructor<TSearchRequest> },
-      );
-
-      for (const entity of response.data) {
-        dispatch(api.util.upsertQueryData('get', { id: entity.id, params: entityRequest }, entity));
-      }
     },
     handleEntityUpdate: async (arg, { dispatch, queryFulfilled, getState }, options) => {
       const { optimistic = false, shouldRefetchEntity = false, tags } = options || {};
