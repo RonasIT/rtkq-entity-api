@@ -37,6 +37,7 @@ import {
  * @param {((pagination: Pagination, request: TSearchRequest) => number) | undefined} [options.getCurrentPage=((pagination) => pagination.currentPage)] - The function to get current page.
  * @returns {Omit<EntityApi<TEntity, TSearchRequest, TEntityRequest, TSearchResponse, typeof omitEndpoints>, keyof EntityApiCustomHooks> & EntityApiCustomHooks<TEntity, TSearchRequest, TSearchResponse>} The entity API.
  */
+
 export function createEntityApi<
   TEntity extends BaseEntity,
   TSearchRequest extends PaginationRequest = PaginationRequest,
@@ -179,7 +180,6 @@ export function createEntityApi<
           },
           providesTags: (response) => getEntityTags(entityName, response, getEntityId),
         }),
-
         /**
          * Creates a query endpoint for infinite searching entities. Behaves similar to `search`:
          * - A query endpoint that requests `GET /{baseEndpoint}` for searching entities.
@@ -229,6 +229,50 @@ export function createEntityApi<
                 cache.pagination = response.pagination;
               }
             }
+          },
+        }),
+        /**
+         * Creates a query endpoint for infinite searching entities.
+         * - A query endpoint that requests `GET /{baseEndpoint}` for searching entities.
+         * - Accepts request params described by `entitySearchRequestConstructor` and returns `entitySearchResponseConstructor` extending `PaginationRequest` and `PaginationResponse` respectively.
+         * But accumulates data from newly requested pages.
+         * This query can be used with `useSearchPaginatedInfiniteQuery` hook to implement infinite scrolling lists.
+         * It supports loading data in both directions using `fetchNextPage` and `fetchPreviousPage` callbacks, and provides other useful props.
+         *
+         * @param {TSearchRequest} params - The parameters for searching the entities.
+         * @return {Promise<InfiniteData<TSearchResponse, number>>} A promise that resolves to the search result.
+         */
+        searchPaginated: builder.infiniteQuery<TSearchResponse, TSearchRequest, number>({
+          infiniteQueryOptions: {
+            initialPageParam: 1,
+
+            getNextPageParam: (lastPage, _allPages, lastPageParam) => lastPageParam < lastPage?.pagination.lastPage ? lastPageParam + 1 : undefined,
+          },
+          query: ({ queryArg, pageParam }) => {
+            return {
+              method: 'get',
+              url: baseEndpoint,
+              params: prepareRequestParams({ ...queryArg, page: pageParam }, entitySearchRequestConstructor),
+            };
+          },
+          transformResponse: (response, _, { queryArg }) => {
+            const { data, pagination } = plainToInstance(entitySearchResponseConstructor, response);
+
+            return {
+              minPage: pagination.currentPage,
+              data: data.map((item) => createEntityInstance<TEntity>(entityConstructor, item)),
+              pagination: { ...pagination, currentPage: getCurrentPage(pagination, queryArg) },
+            } as TSearchResponse & { minPage?: number };
+          },
+          providesTags: (data) => {
+            return data
+              ? [
+                  { type: entityName, id: EntityTagID.LIST },
+                  ...data.pages
+                    .map((response) => response.data.map((item) => ({ type: entityName, id: getEntityId(item) })))
+                    .flat(),
+                ]
+              : [];
           },
         }),
 
