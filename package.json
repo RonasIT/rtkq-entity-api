@@ -1,6 +1,6 @@
 {
   "name": "@ronas-it/rtkq-entity-api",
-  "version": "0.5.0",
+  "version": "1.0.0-alpha.1",
   "description": "Wrapper utilities for CRUD operations with REST APIs entities using RTK Query",
   "license": "MIT",
   "author": "Ronas IT",
@@ -29,9 +29,10 @@
     "dist"
   ],
   "scripts": {
-    "lint": "eslint ./",
+    "lint": "npx tsc && npx eslint ./",
     "format": "npx prettier --write . && npm run lint -- --fix",
     "build": "tsup-node",
+    "release": "npm publish",
     "prepack": "npm run build",
     "prepare": "husky"
   },
@@ -53,6 +54,9 @@
     "@react-native-community/netinfo": {
       "optional": true
     }
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "*"
   },
   "devDependencies": {
     "@eslint/compat": "^1.2.4",
