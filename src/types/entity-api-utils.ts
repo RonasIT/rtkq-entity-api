@@ -75,7 +75,7 @@ export type EntityApiUtils<
    */
   handleEntityUpdate: (
     arg: EntityPartial<TEntity> | TEntity['id'],
-    endpointLifecycle: LifecycleApi<EntityPartial<TEntity>, EntityPartial<TEntity> | TEntity['id']>,
+    endpointLifecycle: LifecycleApi<EntityPartial<TEntity> | void, EntityPartial<TEntity> | TEntity['id']>,
     options?: {
       optimistic?: boolean;
       shouldRefetchEntity?: boolean;
