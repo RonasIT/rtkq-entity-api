@@ -22,10 +22,10 @@ export type EntityEndpointsDefinitions<
 > = {
   create: MutationDefinition<Partial<TEntity>, BaseQueryFunction, string, TEntity>;
   search: QueryDefinition<TSearchRequest, BaseQueryFunction, string, TSearchResponse>;
-  searchInfinite: QueryDefinition<TSearchRequest, BaseQueryFunction, string, TSearchResponse & { minPage?: number }>;
   /**
    * @deprecated This endpoint will be removed. Instead, use 'useSearchPaginatedInfiniteQuery' hook in your entity API
    */
+  searchInfinite: QueryDefinition<TSearchRequest, BaseQueryFunction, string, TSearchResponse & { minPage?: number }>;
   searchPaginated: InfiniteQueryDefinition<
     TSearchRequest,
     number,

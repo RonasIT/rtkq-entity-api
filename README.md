@@ -81,9 +81,8 @@ Generated entity APIs provide the following [endpoints](https://redux-toolkit.js
 
 3. `search` - a query that requests `GET /{baseEndpoint}` to get entities list with pagination. Accepts request params described by `entitySearchRequestConstructor` and returns `entitySearchResponseConstructor` extending `PaginationRequest` and `PaginationResponse` respectively.
 
-4. `searchInfinite` - this query behaves similar to `search`, but accumulates data from newly requested pages.
-   This query can be used with `useSearchInfiniteQuery` hook to implement infinite scrolling lists. It supports loading
-   data in both directions using `fetchNextPage` and `fetchPreviousPage` callbacks, and provides other useful props.
+4. `searchPaginated` - this query behaves similar to `search`, but accumulates data from newly requested pages.
+   This query can be used with `useSearchPaginatedInfiniteQuery` hook to implement infinite scrolling lists. This query can be used with `useSearchPaginatedInfiniteQuery` hook to implement infinite scrolling lists. It supports loading data in both directions using `fetchNextPage` and `fetchPreviousPage` callbacks, and provides other useful props.
 
 5. `update` - this mutation performs `PUT /{baseEndpoint}/{id}` request to update entity data.
    Accepts `Partial` data of entity instance with mandatory `id`.
