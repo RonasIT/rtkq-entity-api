@@ -1,6 +1,6 @@
 // NOTE: This file contains types that are not exported by @reduxjs/toolkit but are used in the package
 import { TypedMutationOnQueryStarted } from '@reduxjs/toolkit/query';
-import { Patch } from 'immer';
+import { Draft, Patch } from 'immer';
 import { BaseEntity } from '../models';
 import { BaseQueryFunction } from '../utils';
 import { EntityPartial } from './entity-partial';
@@ -18,3 +18,5 @@ export type PatchCollection = {
   inversePatches: Array<Patch>;
   undo: () => void;
 };
+
+export type MaybeDrafted<T> = T | Draft<T>;
