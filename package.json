@@ -37,11 +37,11 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@reduxjs/toolkit": "^2.9.0",
-    "axios": "^1.7.9",
+    "@reduxjs/toolkit": "^2.11.0",
+    "axios": "^1.13.2",
     "class-transformer": "^0.5.1",
     "core-js": "^3.40.0",
-    "immer": "^10.1.1",
+    "immer": "^11.0.0",
     "lodash": "^4.17.21",
     "luxon": "^3.5.0",
     "react-redux": "^9.2.0",
@@ -68,7 +68,7 @@
     "@types/node": "22.10.2",
     "@types/react": "~18.3.18",
     "@react-native-community/netinfo": "^11.4.1",
-    "eslint": "9.17.0",
+    "eslint": "^9.17.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-import-resolver-typescript": "^3.7.0",
     "eslint-plugin-import": "^2.31.0",
