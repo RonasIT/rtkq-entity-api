@@ -6,5 +6,8 @@ export type EntityApiCustomHooks<
   TSearchRequest extends PaginationRequest = PaginationRequest,
   TSearchResponse extends PaginationResponse<TEntity> = PaginationResponse<TEntity>,
 > = {
+  /**
+   * @deprecated This hook will be removed. Instead, use 'useSearchPaginatedInfiniteQuery' hook in your entity API
+   */
   useSearchInfiniteQuery: ReturnType<typeof createInfiniteQueryHook<TEntity, TSearchRequest, TSearchResponse>>;
 };
