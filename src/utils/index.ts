@@ -12,4 +12,5 @@ export * from './merge-entity';
 export * from './prepare-request-params';
 export * from './prepare-server-side-request-headers';
 export * from './setup-refetch-listeners';
+export * from './find-entity-in-pages';
 export * from './store';

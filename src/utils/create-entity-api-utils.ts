@@ -1,4 +1,4 @@
-import { PatchCollection } from '@reduxjs/toolkit/src/query/core/buildThunks';
+import { InfiniteData } from '@reduxjs/toolkit/query';
 import { ClassConstructor } from 'class-transformer';
 import { EntityTagID } from '../enums';
 import { BaseEntity, EntityRequest, PaginationRequest, PaginationResponse } from '../models';
@@ -8,8 +8,11 @@ import {
   EntityMutationEndpointName,
   EntityPartial,
   EntityQueryEndpointName,
+  MaybeDrafted,
+  PatchCollection,
 } from '../types';
 import { createEntityInstance } from './create-entity-instance';
+import { findEntityInPages } from './find-entity-in-pages';
 import { mergeEntity } from './merge-entity';
 
 export const createEntityApiUtils = <
@@ -66,14 +69,32 @@ export const createEntityApiUtils = <
 
         const action = api.util.updateQueryData(
           endpointName as EntityQueryEndpointName,
-          originalArgs as any,
-          (endpointData) => {
+          originalArgs as never,
+          (data) => {
+            const endpointData = data as MaybeDrafted<
+              | TEntity
+              | TSearchResponse
+              | (TSearchResponse & {
+                  minPage?: number;
+                })
+              | InfiniteData<TSearchResponse, number>
+            >;
+
             if ('data' in endpointData && Array.isArray(endpointData.data)) {
               const existingItemIndex = endpointData.data.findIndex((item) => item.id === entityData.id);
 
               if (existingItemIndex > -1) {
                 endpointData.data[existingItemIndex] = mergeEntity(
                   endpointData.data[existingItemIndex],
+                  existingEntity,
+                );
+              }
+            } else if ('pages' in endpointData && Array.isArray(endpointData.pages)) {
+              const { pageIndex, itemIndex } = findEntityInPages(endpointData.pages, entityData.id);
+
+              if (pageIndex > -1 && itemIndex > -1) {
+                endpointData.pages[pageIndex].data[itemIndex] = mergeEntity(
+                  endpointData.pages[pageIndex].data[itemIndex],
                   existingEntity,
                 );
               }
@@ -106,14 +127,34 @@ export const createEntityApiUtils = <
       for (const { endpointName, originalArgs } of cachedQueries) {
         const action = api.util.updateQueryData(
           endpointName as EntityQueryEndpointName,
-          originalArgs as any,
-          (endpointData) => {
+          originalArgs as never,
+          (data) => {
+            const endpointData = data as MaybeDrafted<
+              | TEntity
+              | TSearchResponse
+              | (TSearchResponse & {
+                  minPage?: number;
+                })
+              | InfiniteData<TSearchResponse, number>
+            >;
+
             if ('data' in endpointData && Array.isArray(endpointData.data)) {
               const existingItemIndex = endpointData.data.findIndex((item) => item.id === id);
 
               if (existingItemIndex > -1) {
                 endpointData.data.splice(existingItemIndex, 1);
                 endpointData.pagination.total--;
+              }
+            } else if ('pages' in endpointData && Array.isArray(endpointData.pages)) {
+              const { pageIndex, itemIndex } = findEntityInPages(endpointData.pages, id);
+
+              if (pageIndex > -1 && itemIndex > -1) {
+                endpointData.pages[pageIndex].data.splice(itemIndex, 1);
+                endpointData.pages.filter((pages) => !!pages.data.length);
+
+                for (let i = 0; i < endpointData.pages.length; i++) {
+                  endpointData.pages[i].pagination.total--;
+                }
               }
             }
           },
@@ -124,30 +165,6 @@ export const createEntityApiUtils = <
       }
 
       return patchResults;
-    },
-    handleEntityCreate: async (_args, { dispatch, queryFulfilled }) => {
-      const { data: createdEntity } = await queryFulfilled;
-
-      if (createdEntity?.id) {
-        await dispatch(api.util.upsertQueryData('get', { id: createdEntity.id }, createdEntity));
-      }
-    },
-    handleEntitySearch: async (request, { shouldUpsertEntityQueries = false, dispatch, queryFulfilled }) => {
-      if (!shouldUpsertEntityQueries) {
-        return;
-      }
-
-      const { data: response } = await queryFulfilled;
-
-      const entityRequest = createEntityInstance<TEntityRequest>(
-        entityGetRequestConstructor as ClassConstructor<TEntityRequest>,
-        request,
-        { convertFromInstance: entitySearchRequestConstructor as ClassConstructor<TSearchRequest> },
-      );
-
-      for (const entity of response.data) {
-        dispatch(api.util.upsertQueryData('get', { id: entity.id, params: entityRequest }, entity));
-      }
     },
     handleEntityUpdate: async (arg, { dispatch, queryFulfilled, getState }, options) => {
       const { optimistic = false, shouldRefetchEntity = false, tags } = options || {};

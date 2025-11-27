@@ -1,11 +1,13 @@
 import {
   Api,
+  EndpointBuilder,
+  EndpointDefinitions,
+  InfiniteQueryDefinition,
   MutationDefinition,
   QueryDefinition,
   coreModuleName,
   reactHooksModuleName,
 } from '@reduxjs/toolkit/query/react';
-import { EndpointBuilder, EndpointDefinitions } from '@reduxjs/toolkit/src/query';
 import { BaseEntity, EntityRequest, PaginationRequest, PaginationResponse } from '../models';
 import { BaseQueryFunction } from '../utils';
 import { EntityApiCustomHooks } from './custom-hooks';
@@ -20,7 +22,21 @@ export type EntityEndpointsDefinitions<
 > = {
   create: MutationDefinition<Partial<TEntity>, BaseQueryFunction, string, TEntity>;
   search: QueryDefinition<TSearchRequest, BaseQueryFunction, string, TSearchResponse>;
+  /**
+   * @deprecated This endpoint will be removed. Instead, use 'useSearchPaginatedInfiniteQuery' hook in your entity API
+   */
   searchInfinite: QueryDefinition<TSearchRequest, BaseQueryFunction, string, TSearchResponse & { minPage?: number }>;
+  searchPaginated: InfiniteQueryDefinition<
+    TSearchRequest,
+    number,
+    BaseQueryFunction,
+    string,
+    TSearchResponse & {
+      minPage?: number;
+    },
+    string,
+    unknown
+  >;
   get: QueryDefinition<{ id: TEntity['id']; params?: TEntityRequest }, BaseQueryFunction, string, TEntity>;
   update: MutationDefinition<EntityPartial<TEntity>, BaseQueryFunction, string, EntityPartial<TEntity>>;
   delete: MutationDefinition<number, BaseQueryFunction, string, void>;
