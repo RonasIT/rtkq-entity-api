@@ -170,9 +170,7 @@ export const createPaginatedInfiniteQueryHook =
   ) => (
     searchRequest: TRequest = {} as TRequest,
     queryOptions: Partial<SubscriptionOptions & { refetchOnMountOrArgChange: boolean | number; skip?: boolean }> = {},
-    // utilities: { checkHasNextPage?: (paginationResponse?: PaginationResponse<TEntity>) => boolean } = {},
   ): typeof result => {
-    // const dispatch: ThunkDispatch<any, any, UnknownAction> = useDispatch();
     const { data, isFetching, ...restEndpointData } = entityApi[
       getPreservedHookName('useSearchPaginatedInfiniteQuery') as 'useSearchPaginatedInfiniteQuery'
     ](searchRequest as TRequest, queryOptions);
