@@ -186,6 +186,11 @@ export const createPaginatedInfiniteQueryHook =
       return restEndpointData.refetch();
     }, [restEndpointData.refetch]);
 
+    useEffect(() => {
+      if (!isFetching) {
+      }
+    }, [isFetching]);
+
     const result = {
       ...restEndpointData,
       data: items,
