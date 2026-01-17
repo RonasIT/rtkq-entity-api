@@ -188,6 +188,7 @@ export const createPaginatedInfiniteQueryHook =
 
     useEffect(() => {
       if (!isFetching) {
+        setIsRefetching(false);
       }
     }, [isFetching]);
 
