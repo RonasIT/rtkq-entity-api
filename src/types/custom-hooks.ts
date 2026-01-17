@@ -1,5 +1,5 @@
 import { BaseEntity, PaginationRequest, PaginationResponse } from '../models';
-import { createInfiniteQueryHook } from '../utils';
+import { createInfiniteQueryHook, createPaginatedInfiniteQueryHook } from '../utils';
 
 export type EntityApiCustomHooks<
   TEntity extends BaseEntity = BaseEntity,
@@ -10,4 +10,7 @@ export type EntityApiCustomHooks<
    * @deprecated This hook will be removed. Instead, use 'useSearchPaginatedInfiniteQuery' hook in your entity API
    */
   useSearchInfiniteQuery: ReturnType<typeof createInfiniteQueryHook<TEntity, TSearchRequest, TSearchResponse>>;
+  useSearchPaginatedInfiniteQuery: ReturnType<
+    typeof createPaginatedInfiniteQueryHook<TEntity, TSearchRequest, TSearchResponse>
+  >;
 };

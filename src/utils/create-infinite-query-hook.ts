@@ -13,11 +13,12 @@ export const createEntityApiHooks = <
 >(
   entityApi: Pick<
     EntityApi<TEntity, TRequest, any, TPaginationResponse, Array<EntityMutationEndpointName>>,
-    'useSearchInfiniteQuery' | 'endpoints' | 'util'
+    'useSearchInfiniteQuery' | 'useSearchPaginatedInfiniteQuery' | 'endpoints' | 'util'
   >,
 ): EntityApiCustomHooks<TEntity, TRequest, TPaginationResponse> => {
   const entityApiHooks = {
     useSearchInfiniteQuery: createInfiniteQueryHook(entityApi),
+    useSearchPaginatedInfiniteQuery: createPaginatedInfiniteQueryHook(entityApi),
   };
 
   // NOTE: Preserve original hooks to extend them
@@ -49,10 +50,9 @@ export const createInfiniteQueryHook =
     utilities: { checkHasNextPage?: (paginationResponse?: PaginationResponse<TEntity>) => boolean } = {},
   ): typeof result => {
     const dispatch: ThunkDispatch<any, any, UnknownAction> = useDispatch();
-    const { data, isFetching, ...restEndpointData } = entityApi[getPreservedHookName('useSearchInfiniteQuery')](
-      searchRequest as TRequest,
-      queryOptions,
-    );
+    const { data, isFetching, ...restEndpointData } = entityApi[
+      getPreservedHookName('useSearchInfiniteQuery') as 'useSearchInfiniteQuery'
+    ](searchRequest as TRequest, queryOptions);
     const latestSearchRequest = restEndpointData.originalArgs || searchRequest;
     const maxFetchedPage = data?.pagination?.currentPage;
 
@@ -152,6 +152,46 @@ export const createInfiniteQueryHook =
       refetchLastPage,
       refetchAllPages,
       fetchPage,
+    };
+
+    return result;
+  };
+
+export const createPaginatedInfiniteQueryHook =
+  <
+    TEntity extends BaseEntity,
+    TRequest extends PaginationRequest,
+    TPaginationResponse extends PaginationResponse<TEntity> = PaginationResponse<TEntity>,
+  >(
+    entityApi: Pick<
+      EntityApi<TEntity, TRequest, any, TPaginationResponse, Array<EntityMutationEndpointName>>,
+      'useSearchPaginatedInfiniteQuery' | 'endpoints' | 'util'
+    >,
+  ) => (
+    searchRequest: TRequest = {} as TRequest,
+    queryOptions: Partial<SubscriptionOptions & { refetchOnMountOrArgChange: boolean | number; skip?: boolean }> = {},
+    // utilities: { checkHasNextPage?: (paginationResponse?: PaginationResponse<TEntity>) => boolean } = {},
+  ): typeof result => {
+    // const dispatch: ThunkDispatch<any, any, UnknownAction> = useDispatch();
+    const { data, isFetching, ...restEndpointData } = entityApi[
+      getPreservedHookName('useSearchPaginatedInfiniteQuery') as 'useSearchPaginatedInfiniteQuery'
+    ](searchRequest as TRequest, queryOptions);
+    const [isRefetching, setIsRefetching] = useState<boolean>(false);
+
+    const items = useMemo(() => data?.pages.flatMap((page) => page.data) ?? [], [data?.pages]);
+
+    const refetch = useCallback(() => {
+      setIsRefetching(true);
+
+      return restEndpointData.refetch();
+    }, [restEndpointData.refetch]);
+
+    const result = {
+      ...restEndpointData,
+      data: items,
+      isFetching,
+      isRefetching,
+      refetch,
     };
 
     return result;
