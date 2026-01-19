@@ -176,7 +176,7 @@ export const createPaginatedInfiniteQueryHook =
     ](searchRequest as TRequest, queryOptions);
     const [isRefetching, setIsRefetching] = useState<boolean>(false);
 
-    const items = useMemo(() => data?.pages.flatMap((page) => page.data) ?? [], [data?.pages]);
+    const flatData = useMemo(() => data?.pages.flatMap((page) => page.data) ?? [], [data?.pages]);
 
     const refetch = useCallback(() => {
       setIsRefetching(true);
@@ -192,7 +192,8 @@ export const createPaginatedInfiniteQueryHook =
 
     const result = {
       ...restEndpointData,
-      data: items,
+      data,
+      flatData,
       isFetching,
       isRefetching,
       refetch,
