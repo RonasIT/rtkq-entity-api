@@ -258,10 +258,9 @@ export function createEntityApi<
             const { data, pagination } = plainToInstance(entitySearchResponseConstructor, response);
 
             return {
-              minPage: pagination.currentPage,
               data: data.map((item) => createEntityInstance<TEntity>(entityConstructor, item)),
               pagination: { ...pagination, currentPage: getCurrentPage(pagination, queryArg) },
-            } as TSearchResponse & { minPage?: number };
+            } as TSearchResponse;
           },
           providesTags: (data) => {
             return data

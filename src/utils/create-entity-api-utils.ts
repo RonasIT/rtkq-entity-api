@@ -72,12 +72,7 @@ export const createEntityApiUtils = <
           originalArgs as never,
           (data) => {
             const endpointData = data as MaybeDrafted<
-              | TEntity
-              | TSearchResponse
-              | (TSearchResponse & {
-                  minPage?: number;
-                })
-              | InfiniteData<TSearchResponse, number>
+              TEntity | TSearchResponse | InfiniteData<TSearchResponse, number>
             >;
 
             if ('data' in endpointData && Array.isArray(endpointData.data)) {
@@ -130,12 +125,7 @@ export const createEntityApiUtils = <
           originalArgs as never,
           (data) => {
             const endpointData = data as MaybeDrafted<
-              | TEntity
-              | TSearchResponse
-              | (TSearchResponse & {
-                  minPage?: number;
-                })
-              | InfiniteData<TSearchResponse, number>
+              TEntity | TSearchResponse | InfiniteData<TSearchResponse, number>
             >;
 
             if ('data' in endpointData && Array.isArray(endpointData.data)) {

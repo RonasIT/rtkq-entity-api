@@ -31,9 +31,7 @@ export type EntityEndpointsDefinitions<
     number,
     BaseQueryFunction,
     string,
-    TSearchResponse & {
-      minPage?: number;
-    },
+    TSearchResponse,
     string,
     unknown
   >;
