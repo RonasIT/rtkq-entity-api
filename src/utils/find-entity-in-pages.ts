@@ -13,7 +13,7 @@ export const findEntityInPages = <
   const pageIndex = pages.findIndex((page) => {
     const foundItemIndex = page.data.findIndex((item: { id: unknown }) => item.id === entityId);
 
-    if (itemIndex !== -1) {
+    if (foundItemIndex !== -1) {
       itemIndex = foundItemIndex;
 
       return true;
