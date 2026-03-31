@@ -78,7 +78,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^15.3.0",
     "prettier": "^3.4.2",
-    "react-native": "^0.83.4",
+    "react-native": "^0.82.1",
     "tsc-files": "^1.1.4",
     "tsup": "^8.3.5",
     "typescript": "~5.4.5",
